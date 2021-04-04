@@ -6,6 +6,10 @@ import java.util.List;
 
 public interface NoteRepository {
 
+    List<Note> findNotes(String text);
+
+    void updateNote(Note note);
+
     int getIndex(Note note);
 
     void insertNote(Note note);
