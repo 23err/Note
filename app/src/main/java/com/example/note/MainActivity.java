@@ -4,7 +4,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
 import android.os.Bundle;
-import android.widget.FrameLayout;
+
+import com.example.note.fragments.ListNotesFragment;
 
 public class MainActivity extends AppCompatActivity {
 

@@ -1,27 +1,49 @@
-package com.example.note;
+package com.example.note.fragments;
 
 import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.DatePicker;
+import android.widget.EditText;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.example.note.R;
+import com.example.note.beans.Note;
 import com.google.android.material.datepicker.MaterialStyledDatePickerDialog;
 import com.google.android.material.textview.MaterialTextView;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 
 public class NoteFragment extends Fragment {
 
     private MaterialTextView tvDate;
+    private EditText etBody, etName;
+    private Note note;
+    private OnNoteUpdateListener noteUpdateListener;
+
+    private SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
+
+    public interface OnNoteUpdateListener {
+        void onUpdateNote(Note note);
+    };
+
+    public static NoteFragment getInstance(Note note) {
+        NoteFragment noteFragment = new NoteFragment();
+        noteFragment.note = note;
+        return noteFragment;
+    }
+
+    public NoteFragment(){
+        note = new Note("","");
+    }
+
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -40,8 +62,34 @@ public class NoteFragment extends Fragment {
 
         findViews(view);
 
+        setValues();
         setDatePickerDialog();
 
+
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        note.setBody(etBody.getText().toString());
+        note.setName(etName.getText().toString());
+        notifyNoteUpdate();
+    }
+
+    public void setNoteUpdateListener(OnNoteUpdateListener listener) {
+        noteUpdateListener = listener;
+    }
+
+    private void notifyNoteUpdate() {
+        if (noteUpdateListener != null) {
+            noteUpdateListener.onUpdateNote(note);
+        }
+    }
+
+    private void setValues() {
+        etName.setText(note.getName());
+        etBody.setText(note.getBody());
+        tvDate.setText(dateFormat.format(note.getDate()));
     }
 
     @SuppressLint("RestrictedApi")
@@ -52,8 +100,12 @@ public class NoteFragment extends Fragment {
                     new DatePickerDialog.OnDateSetListener() {
                         @Override
                         public void onDateSet(DatePicker datePicker, int i, int i1, int i2) {
-                            String date = String.format("%02d.%02d.%4d", i2, i1, i);
-                            tvDate.setText(date);
+                            String stringDate = String.format("%02d.%02d.%4d", i2, i1, i);
+                            tvDate.setText(stringDate);
+                            calendar.set(i,i1,i2);
+                            note.setDate(calendar.getTime());
+
+
                         }
                     },
                     calendar.get(Calendar.YEAR),
@@ -66,6 +118,8 @@ public class NoteFragment extends Fragment {
 
     private void findViews(@NonNull View view) {
         tvDate = view.findViewById(R.id.tvDate);
+        etBody = view.findViewById(R.id.etBody);
+        etName = view.findViewById(R.id.etName);
     }
 }
 
