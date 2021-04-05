@@ -7,15 +7,23 @@ import androidx.annotation.RequiresApi;
 import com.example.note.beans.Note;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class LocalNoteRepository implements NoteRepository {
-    List<Note> noteList;
+    private List<Note> noteList;
 
     public LocalNoteRepository() {
         noteList = new ArrayList<>();
+        fillNoteList();
+    }
+
+    private void fillNoteList() {
+        this.insertNote(new Note("first note", "aklsjhfkkhsdf askdjfhka", new Date()));
+        this.insertNote(new Note("second note", "aklsjhfkkhsdf askdjfhka", new Date()));
+        this.insertNote(new Note("", "third note in body", new Date()));
+        this.insertNote(new Note("ajsd", "aklsjhfkkhsdf askdjfhka", new Date()));
     }
 
 
@@ -47,6 +55,15 @@ public class LocalNoteRepository implements NoteRepository {
     }
 
     @Override
+    public void insertOrUpdateNote(Note note) {
+        if (getIndex(note) >= 0) {
+            updateNote(note);
+        } else {
+            insertNote(note);
+        }
+    }
+
+    @Override
     public Note getNote(int index) {
         return noteList.get(index);
     }
@@ -58,7 +75,7 @@ public class LocalNoteRepository implements NoteRepository {
 
     @Override
     public int getSize() {
-        return 0;
+        return noteList.size();
     }
 
     @Override

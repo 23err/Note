@@ -14,6 +14,8 @@ public interface NoteRepository {
 
     void insertNote(Note note);
 
+    void insertOrUpdateNote(Note note);
+
     Note getNote(int index);
 
     List<Note> getNoteList();

@@ -3,11 +3,13 @@ package com.example.note.fragments;
 import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -18,6 +20,7 @@ import com.example.note.beans.Note;
 import com.google.android.material.datepicker.MaterialStyledDatePickerDialog;
 import com.google.android.material.textview.MaterialTextView;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
@@ -59,20 +62,24 @@ public class NoteFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
         findViews(view);
-
         setValues();
         setDatePickerDialog();
-
-
     }
 
     @Override
     public void onPause() {
         super.onPause();
+        Toast.makeText(getContext(), "onPause", Toast.LENGTH_SHORT).show();
         note.setBody(etBody.getText().toString());
         note.setName(etName.getText().toString());
+        tvDate.getText().toString();
+        try {
+            note.setDate(dateFormat.parse(tvDate.getText().toString()));
+        } catch (ParseException e) {
+            e.printStackTrace();
+            Log.e("parse", "parce date in note exception");
+        }
         notifyNoteUpdate();
     }
 
@@ -102,10 +109,6 @@ public class NoteFragment extends Fragment {
                         public void onDateSet(DatePicker datePicker, int i, int i1, int i2) {
                             String stringDate = String.format("%02d.%02d.%4d", i2, i1, i);
                             tvDate.setText(stringDate);
-                            calendar.set(i,i1,i2);
-                            note.setDate(calendar.getTime());
-
-
                         }
                     },
                     calendar.get(Calendar.YEAR),

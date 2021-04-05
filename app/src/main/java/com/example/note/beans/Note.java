@@ -49,6 +49,10 @@ public class Note {
         this(name, body, new Date());
     }
 
+    public Note(){
+        this("", "");
+    }
+
 
     @Override
     public String toString(){

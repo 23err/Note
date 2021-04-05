@@ -47,8 +47,7 @@ public class ListNotesFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         findViews(view);
 
-        initRepo();
-
+        repo = NoteRepositoryFactory.getInstance();
         noteList = new ArrayList<Note>();
         setAllNotesToList();
 
@@ -83,7 +82,6 @@ public class ListNotesFragment extends Fragment {
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                Toast.makeText(getContext(), "query set", Toast.LENGTH_SHORT).show();
                 if (newText.trim().length() == 0) {
                     setAllNotesToList();
                 } else {
@@ -98,7 +96,9 @@ public class ListNotesFragment extends Fragment {
 
     private void setFragmentUpdateListener(NoteFragment fragment) {
         fragment.setNoteUpdateListener(note1 -> {
-            adapter.notifyItemChanged(repo.getIndex(note1));
+//            adapter.notifyItemChanged(repo.getIndex(note1));
+            repo.insertOrUpdateNote(note1);
+            adapter.notifyDataSetChanged();
         });
     }
 
@@ -112,23 +112,11 @@ public class ListNotesFragment extends Fragment {
     }
 
 
-    private void initRepo() {
-        repo = NoteRepositoryFactory.getInstance();
-        repo.insertNote(new Note("first note", "aklsjhfkkhsdf askdjfhka", new Date()));
-        repo.insertNote(new Note("second note", "aklsjhfkkhsdf askdjfhka", new Date()));
-        repo.insertNote(new Note("", "third note in body", new Date()));
-        repo.insertNote(new Note("ajsd ajsdkfhlksjhdf sdjklfhaskjdfh sakjdfh alskdj fksdhf note", "aklsjhfkkhsdf askdjfhka", new Date()));
-//        for (int i = 0; i < 30; i++) {
-//            repo.insertNote(new Note("other note", "test text", new Date()));
-//
-//        }
-    }
 
 
     private void btnSetOnClick() {
         btnAdd.setOnClickListener(view1 -> {
-            Note note = new Note("", "");
-            noteList.add(note);
+            Note note = new Note();
             NoteFragment fragment = NoteFragment.getInstance(note);
             setFragmentUpdateListener(fragment);
             showFragment(fragment);
