@@ -11,6 +11,8 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:textSize="@dimen/note_text_size"
+        android:singleLine="true"
+        android:layout_marginEnd="@dimen/text_margin_from_date"
         app:layout_constraintEnd_toStartOf="@+id/tvDate"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"

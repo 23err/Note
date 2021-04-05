@@ -25,9 +25,14 @@ public class MainActivity extends AppCompatActivity {
         isLandscapeOrientation = getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE;
         Fragment fragment;
         if (isLandscapeOrientation) {
-            Note note = new Note();
             NoteRepository repo = NoteRepositoryFactory.getInstance();
-            repo.insertNote(note);
+            Note note;
+            int lastOpenedNote = ListNotesFragment.getLastOpenedNote();
+            if (repo.getSize() > 0 && lastOpenedNote != -1) {
+                note = repo.getNote(lastOpenedNote);
+            }else {
+                note = new Note();
+            }
             fragment = NoteFragment.getInstance(note);
         } else {
             fragment =  new ListNotesFragment();

@@ -41,7 +41,6 @@ public class LocalNoteRepository implements NoteRepository {
 
     @Override
     public void updateNote(Note note) {
-
     }
 
     @Override
@@ -56,10 +55,17 @@ public class LocalNoteRepository implements NoteRepository {
 
     @Override
     public void insertOrUpdateNote(Note note) {
-        if (getIndex(note) >= 0) {
-            updateNote(note);
+        int noteIndex = getIndex(note);
+        if (noteIndex >= 0) {
+            if (note.isEmpty()) {
+                removeNote(noteIndex);
+            } else {
+                updateNote(note);
+            }
         } else {
-            insertNote(note);
+            if (!note.isEmpty()) {
+                insertNote(note);
+            }
         }
     }
 

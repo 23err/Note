@@ -1,10 +1,10 @@
 package com.example.note.fragments;
 
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -20,7 +20,6 @@ import com.example.note.repo.NoteRepositoryFactory;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 public class ListNotesFragment extends Fragment {
@@ -30,10 +29,18 @@ public class ListNotesFragment extends Fragment {
     private NotesListRVAdapter adapter;
     private List<Note> noteList;
     private SearchView searchView;
+    private static int lastOpenedNote = -1;
+    private boolean isLandscape;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        isLandscape = getActivity().getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE;
     }
 
     @Nullable
@@ -96,22 +103,30 @@ public class ListNotesFragment extends Fragment {
 
     private void setFragmentUpdateListener(NoteFragment fragment) {
         fragment.setNoteUpdateListener(note1 -> {
-//            adapter.notifyItemChanged(repo.getIndex(note1));
             repo.insertOrUpdateNote(note1);
+            int index = repo.getIndex(note1);
+            lastOpenedNote = index;
+
+            setAllNotesToList();
             adapter.notifyDataSetChanged();
         });
     }
 
-
-    private void showFragment(Fragment fragment) {
-        requireActivity().getSupportFragmentManager().beginTransaction()
-                .add(R.id.fragmentContainer, fragment)
-                .addToBackStack("note")
-                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-                .commit();
+    public static int getLastOpenedNote() {
+        return lastOpenedNote;
     }
 
 
+    private void showFragment(Fragment fragment) {
+        FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction()
+                .replace(R.id.fragmentContainer, fragment);
+        if (!isLandscape) {
+            transaction.addToBackStack("note");
+        }
+        transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                .commit();
+
+    }
 
 
     private void btnSetOnClick() {

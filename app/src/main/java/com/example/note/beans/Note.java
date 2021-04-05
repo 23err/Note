@@ -49,6 +49,14 @@ public class Note {
         this(name, body, new Date());
     }
 
+    public boolean isEmpty() {
+        return stringLength(name) == 0 && stringLength(body) == 0;
+    }
+
+    private int stringLength(String text) {
+        return text.trim().length();
+    }
+
     public Note(){
         this("", "");
     }
@@ -56,11 +64,11 @@ public class Note {
 
     @Override
     public String toString(){
-        String result;
-        if (name.trim().length()>0){
+        String result = body.replaceAll("\\n", " ");
+        if (stringLength(name)>0){
             result = name;
         } else{
-            result = body.length() > 50 ? body.substring(0,50) : body;
+            result = stringLength(result) > 50 ? result.substring(0,50) : result;
         }
         return result;
     }

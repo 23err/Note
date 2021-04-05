@@ -13,6 +13,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 
 import com.example.note.R;
@@ -70,7 +71,6 @@ public class NoteFragment extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
-        Toast.makeText(getContext(), "onPause", Toast.LENGTH_SHORT).show();
         note.setBody(etBody.getText().toString());
         note.setName(etName.getText().toString());
         tvDate.getText().toString();
@@ -123,6 +123,7 @@ public class NoteFragment extends Fragment {
         tvDate = view.findViewById(R.id.tvDate);
         etBody = view.findViewById(R.id.etBody);
         etName = view.findViewById(R.id.etName);
+
     }
 }
 
