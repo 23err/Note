@@ -35,6 +35,9 @@ public class LocalNoteRepository implements NoteRepository {
     @Override
     public List<Note> findNotes(String text) {
         final String finalText = text.toLowerCase().trim();
+        if (finalText.length()==0) {
+            return noteList;
+        }
         List<Note> list = noteList.stream()
                 .filter(note -> {
                     return (note.getName().toLowerCase().contains(finalText) || note.getBody().toLowerCase().contains(finalText));

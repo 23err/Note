@@ -56,20 +56,30 @@ public class ListNotesFragment extends Fragment {
 
         repo = NoteRepositoryFactory.getInstance();
         noteList = new ArrayList<Note>();
-        setAllNotesToList();
+        initNoteList();
 
         adapter = new NotesListRVAdapter(getContext(), noteList);
         adapterSetOnItemClick();
+        adapterSetOnRemoveItem();
         rvNotes.setAdapter(adapter);
-
         btnSetOnClick();
         searchChange();
+
+
     }
 
-    private void setAllNotesToList() {
-        noteList.clear();
+    private void initNoteList() {
         noteList.addAll(repo.getNoteList());
     }
+
+    private void adapterSetOnRemoveItem() {
+        adapter.setOnRemoveItemListener(note -> {
+            repo.removeNote(note);
+            updateNoteList();
+            adapter.notifyDataSetChanged();
+        });
+    }
+
 
     private void adapterSetOnItemClick() {
         adapter.setOnItemClickListener((view1, note) -> {
@@ -89,16 +99,22 @@ public class ListNotesFragment extends Fragment {
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                if (newText.trim().length() == 0) {
-                    setAllNotesToList();
-                } else {
-                    noteList.clear();
-                    noteList.addAll(repo.findNotes(newText));
-                }
-                adapter.notifyDataSetChanged();
+                updateNoteList(newText);
+
                 return true;
             }
         });
+    }
+
+    private void updateNoteList(){
+
+        updateNoteList(searchView.getQuery().toString());
+    }
+
+    private void updateNoteList(String newText) {
+        noteList.clear();
+        noteList.addAll(repo.findNotes(newText));
+        adapter.notifyDataSetChanged();
     }
 
     private void setFragmentUpdateListener(NoteFragment fragment) {
@@ -107,8 +123,7 @@ public class ListNotesFragment extends Fragment {
             int index = repo.getIndex(note1);
             lastOpenedNote = index;
 
-            setAllNotesToList();
-            adapter.notifyDataSetChanged();
+            updateNoteList();
         });
     }
 
@@ -119,7 +134,7 @@ public class ListNotesFragment extends Fragment {
 
     private void showFragment(Fragment fragment) {
         FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction()
-                .setCustomAnimations(R.animator.slide_in_left, R.animator.slide_in_right)
+                .setCustomAnimations(R.animator.slide_in_left, R.animator.slide_in_right, R.animator.slide_out_left, R.animator.slide_out_right)
                 .replace(R.id.fragmentContainer, fragment);
         if (!isLandscape) {
             transaction.addToBackStack("note");
