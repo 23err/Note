@@ -20,10 +20,14 @@ public class LocalNoteRepository implements NoteRepository {
     }
 
     private void fillNoteList() {
-        this.insertNote(new Note("first note", "aklsjhfkkhsdf askdjfhka", new Date()));
-        this.insertNote(new Note("second note", "aklsjhfkkhsdf askdjfhka", new Date()));
-        this.insertNote(new Note("", "third note in body", new Date()));
-        this.insertNote(new Note("ajsd", "aklsjhfkkhsdf askdjfhka", new Date()));
+        insertNote(new Note("first note", "aklsjhfkkhsdf askdjfhka"));
+        insertNote(new Note("second note", "aklsjhfkkhsdf askdjfhka"));
+        insertNote(new Note("", "third note in body"));
+        insertNote(new Note("ajsd", "aklsjhfkkhsdf askdjfhka"));
+        for (int i = 0; i < 30; i++) {
+            insertNote(new Note("note test", "hello"));
+
+        }
     }
 
 

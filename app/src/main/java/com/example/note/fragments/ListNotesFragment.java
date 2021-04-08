@@ -119,12 +119,13 @@ public class ListNotesFragment extends Fragment {
 
     private void showFragment(Fragment fragment) {
         FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction()
+                .setCustomAnimations(R.animator.slide_in_left, R.animator.slide_in_right)
                 .replace(R.id.fragmentContainer, fragment);
         if (!isLandscape) {
             transaction.addToBackStack("note");
         }
-        transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-                .commit();
+
+                transaction.commit();
 
     }
 
@@ -144,6 +145,8 @@ public class ListNotesFragment extends Fragment {
         searchView = view.findViewById(R.id.searchView);
 
     }
+
+
 
 
 }
