@@ -1,7 +1,7 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <attr name="dateTextColor" format="color|reference"/>
     <!-- Base application theme. -->
-    <style name="Theme.Note" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+    <style name="ThemeNote" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <!-- Primary brand color. -->
         <item name="colorPrimary">@color/red_500</item>
         <item name="colorPrimaryVariant">@color/purple_700</item>
@@ -16,4 +16,10 @@
         <item name="backgroundColor">@color/white</item>
         <item name="dateTextColor">@color/gray_444</item>
     </style>
+
+    <style name="ThemeNote.AppBarOverLay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="ThemeNote.PopupOverlay" parent="Theme.AppCompat.Light" />
+
+
 </resources>

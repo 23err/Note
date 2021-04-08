@@ -3,9 +3,11 @@ package com.example.note.fragments;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -51,8 +53,14 @@ public class NotesListRVAdapter extends RecyclerView.Adapter<NotesListRVAdapter.
             }
         });
         holder.view.setOnCreateContextMenuListener((contextMenu, view, contextMenuInfo) -> {
-            MenuItem menuItem = contextMenu.add(Menu.NONE, ID_REMOVE, Menu.NONE, R.string.remove);
-            menuItem.setOnMenuItemClickListener(menuItem1 -> {
+
+            MenuItem menuItemShare = contextMenu.add(Menu.NONE, ID_REMOVE, Menu.NONE, R.string.share);
+            menuItemShare.setOnMenuItemClickListener(menuItem -> {
+                Toast.makeText(view.getContext(), "Поделились заметкой", Toast.LENGTH_SHORT).show();
+                return true;
+            });
+            MenuItem menuItemRemove = contextMenu.add(Menu.NONE, ID_REMOVE, Menu.NONE, R.string.remove);
+            menuItemRemove.setOnMenuItemClickListener(menuItem1 -> {
                 if (onRemoveItemListener != null) {
                     onRemoveItemListener.onRemove(note);
                 }

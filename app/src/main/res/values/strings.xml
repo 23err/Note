@@ -3,4 +3,11 @@
     <string name="new_note">Новая заметка</string>
     <string name="add_button">add button</string>
     <string name="remove">Удалить</string>
+    <string name="share">Поделиться</string>
+    <string name="settings">Настройки</string>
+    <string name="note">Заметки</string>
+    <string name="about">О приложении</string>
+    <string name="fragment_navigation">Фрагмент навигация</string>
+    <string name="navigation_drawer_open">Открыто</string>
+    <string name="navigation_drawer_close">Закрыто</string>
 </resources>

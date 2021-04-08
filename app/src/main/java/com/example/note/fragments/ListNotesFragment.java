@@ -65,7 +65,6 @@ public class ListNotesFragment extends Fragment {
         btnSetOnClick();
         searchChange();
 
-
     }
 
     private void initNoteList() {
@@ -100,14 +99,12 @@ public class ListNotesFragment extends Fragment {
             @Override
             public boolean onQueryTextChange(String newText) {
                 updateNoteList(newText);
-
                 return true;
             }
         });
     }
 
     private void updateNoteList(){
-
         updateNoteList(searchView.getQuery().toString());
     }
 
@@ -139,9 +136,7 @@ public class ListNotesFragment extends Fragment {
         if (!isLandscape) {
             transaction.addToBackStack("note");
         }
-
                 transaction.commit();
-
     }
 
 
