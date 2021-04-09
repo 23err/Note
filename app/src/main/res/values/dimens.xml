@@ -10,4 +10,10 @@
     <dimen name="nav_header_height">250dp</dimen>
     <dimen name="nav_header_dimen">25sp</dimen>
     <dimen name="nav_mail_text_size">10sp</dimen>
+    <dimen name="group_text_size">22sp</dimen>
+    <dimen name="group_linear_padding">20dp</dimen>
+    <dimen name="card_photo_radius">50dp</dimen>
+    <dimen name="nav_user_padding">30dp</dimen>
+    <dimen name="settings_layout_padding">30dp</dimen>
+    <dimen name="setting_text_size">20sp</dimen>
 </resources>

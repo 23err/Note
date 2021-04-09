@@ -6,6 +6,8 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -49,10 +51,31 @@ public class MainActivity extends AppCompatActivity {
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(item -> {
             int id = item.getItemId();
-            Toast.makeText(this, String.valueOf(id), Toast.LENGTH_SHORT).show();
-            drawer.closeDrawer(GravityCompat.START);
-            return true;
+            if (navigateFragment(id)) {
+                drawer.closeDrawer(GravityCompat.START);
+                return true;
+            }
+            return false;
         });
+    }
+
+    private boolean navigateFragment(int id) {
+        switch (id) {
+            case R.id.action_settings:
+                showFragment(new SettingsFragment());
+                return true;
+        }
+        return false;
+    }
+
+    private void showFragment( Fragment fragment) {
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction()
+                .setCustomAnimations(R.animator.slide_in_left, R.animator.slide_in_right, R.animator.slide_out_left, R.animator.slide_out_right)
+                .replace(R.id.fragmentContainer, fragment);
+        if (!isLandscapeOrientation) {
+            transaction.addToBackStack("note");
+        }
+        transaction.commit();
     }
 
     private Toolbar initToolbar() {
