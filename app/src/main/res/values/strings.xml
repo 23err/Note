@@ -10,4 +10,5 @@
     <string name="fragment_navigation">Фрагмент навигация</string>
     <string name="navigation_drawer_open">Открыто</string>
     <string name="navigation_drawer_close">Закрыто</string>
+    <string name="korzhik">Коржик</string>
 </resources>

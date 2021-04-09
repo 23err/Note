@@ -24,10 +24,10 @@ public class LocalNoteRepository implements NoteRepository {
         insertNote(new Note("second note", "aklsjhfkkhsdf askdjfhka"));
         insertNote(new Note("", "third note in body"));
         insertNote(new Note("ajsd", "aklsjhfkkhsdf askdjfhka"));
-        for (int i = 0; i < 30; i++) {
-            insertNote(new Note("note test", "hello"));
-
-        }
+//        for (int i = 0; i < 30; i++) {
+//            insertNote(new Note("note test", "hello"));
+//
+//        }
     }
 
 
