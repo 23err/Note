@@ -11,7 +11,7 @@
         android:orderInCategory="10"
         android:title="@string/note"/>
     <item
-        android:id="@+id/action_favorite"
+        android:id="@+id/action_about"
         android:icon="@android:drawable/btn_star_big_on"
         android:orderInCategory="200"
         android:title="@string/about"/>

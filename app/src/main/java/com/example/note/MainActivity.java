@@ -64,6 +64,12 @@ public class MainActivity extends AppCompatActivity {
             case R.id.action_settings:
                 showFragment(new SettingsFragment());
                 return true;
+            case R.id.action_about:
+                showFragment(new AboutFragment());
+                return true;
+            case R.id.action_main:
+                showFragment(new ListNotesFragment());
+                return true;
         }
         return false;
     }
