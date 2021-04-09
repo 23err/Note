@@ -2,4 +2,18 @@
     <string name="app_name">Note</string>
     <string name="new_note">Новая заметка</string>
     <string name="add_button">add button</string>
+    <string name="remove">Удалить</string>
+    <string name="share">Поделиться</string>
+    <string name="settings">Настройки</string>
+    <string name="note">Заметки</string>
+    <string name="about">О приложении</string>
+    <string name="fragment_navigation">Фрагмент навигация</string>
+    <string name="navigation_drawer_open">Открыто</string>
+    <string name="navigation_drawer_close">Закрыто</string>
+    <string name="korzhik">Коржик</string>
+    <string name="test_mail">korzhik@sezam.com</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="dark_theme">Темная тема</string>
+    <string name="about_text">Информация о приложение</string>
 </resources>

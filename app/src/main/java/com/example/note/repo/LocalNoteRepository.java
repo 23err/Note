@@ -20,10 +20,14 @@ public class LocalNoteRepository implements NoteRepository {
     }
 
     private void fillNoteList() {
-        this.insertNote(new Note("first note", "aklsjhfkkhsdf askdjfhka", new Date()));
-        this.insertNote(new Note("second note", "aklsjhfkkhsdf askdjfhka", new Date()));
-        this.insertNote(new Note("", "third note in body", new Date()));
-        this.insertNote(new Note("ajsd", "aklsjhfkkhsdf askdjfhka", new Date()));
+        insertNote(new Note("first note", "aklsjhfkkhsdf askdjfhka"));
+        insertNote(new Note("second note", "aklsjhfkkhsdf askdjfhka"));
+        insertNote(new Note("", "third note in body"));
+        insertNote(new Note("ajsd", "aklsjhfkkhsdf askdjfhka"));
+//        for (int i = 0; i < 30; i++) {
+//            insertNote(new Note("note test", "hello"));
+//
+//        }
     }
 
 
@@ -31,6 +35,9 @@ public class LocalNoteRepository implements NoteRepository {
     @Override
     public List<Note> findNotes(String text) {
         final String finalText = text.toLowerCase().trim();
+        if (finalText.length()==0) {
+            return noteList;
+        }
         List<Note> list = noteList.stream()
                 .filter(note -> {
                     return (note.getName().toLowerCase().contains(finalText) || note.getBody().toLowerCase().contains(finalText));
