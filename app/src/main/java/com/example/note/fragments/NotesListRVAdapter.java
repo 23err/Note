@@ -3,7 +3,6 @@ package com.example.note.fragments;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +23,7 @@ public class NotesListRVAdapter extends RecyclerView.Adapter<NotesListRVAdapter.
     private List<Note> notes;
     private OnItemClickListener onItemClickListener;
     private OnRemoveItemListener onRemoveItemListener;
+    private boolean isCardViewItem = false;
 
     public void setOnRemoveItemListener(OnRemoveItemListener onRemoveItemListener) {
         this.onRemoveItemListener = onRemoveItemListener;
@@ -34,10 +34,24 @@ public class NotesListRVAdapter extends RecyclerView.Adapter<NotesListRVAdapter.
         inflater = LayoutInflater.from(context);
     }
 
+    public void setCardView(boolean isCardViewItem) {
+        this.isCardViewItem = isCardViewItem;
+    }
+
+    public boolean getCardView() {
+        return isCardViewItem;
+    }
+
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = inflater.inflate(R.layout.note_rv_item, parent, false);
+        int resItem;
+        if (isCardViewItem) {
+            resItem = R.layout.note_rv_item_card;
+        } else {
+            resItem = R.layout.note_rv_item_line;
+        }
+        View view = inflater.inflate(resItem, parent, false);
         return new ViewHolder(view);
     }
 
@@ -83,17 +97,23 @@ public class NotesListRVAdapter extends RecyclerView.Adapter<NotesListRVAdapter.
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         public static final int MENU_ITEM_REMOVE = 999;
-        final MaterialTextView tvName, tvDate;
+        final MaterialTextView tvName, tvDate, tvBody;
 
         public ViewHolder(@NonNull View view) {
             super(view);
             tvName = view.findViewById(R.id.tvName);
             tvDate = view.findViewById(R.id.tvDate);
+            tvBody = view.findViewById(R.id.tvBody);
         }
 
         public void bind(Note note) {
-            tvName.setText(note.toString());
             tvDate.setText(note.getFormatDate());
+            if (tvBody != null) {
+                tvBody.setText(note.getBody());
+                tvName.setText(note.getName());
+            } else {
+                tvName.setText(note.toString());
+            }
         }
     }
 
