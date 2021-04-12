@@ -1,5 +1,8 @@
 package com.example.note;
 
+import android.content.res.Configuration;
+import android.os.Bundle;
+
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -9,16 +12,14 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
-import android.content.res.Configuration;
-import android.os.Bundle;
-import android.widget.Toast;
-
 import com.example.note.beans.Note;
 import com.example.note.fragments.ListNotesFragment;
 import com.example.note.fragments.NoteFragment;
 import com.example.note.repo.NoteRepository;
 import com.example.note.repo.NoteRepositoryFactory;
 import com.google.android.material.navigation.NavigationView;
+
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -32,9 +33,10 @@ public class MainActivity extends AppCompatActivity {
 
         checkLandscape();
         showFragmentDependOrientation();
-
         initView();
     }
+
+
 
     private void initView() {
         Toolbar toolbar = initToolbar();
@@ -43,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void initDrawer(Toolbar toolbar) {
         DrawerLayout drawer = findViewById(R.id.drawerLayout);
+
         ActionBarDrawerToggle toogle = new ActionBarDrawerToggle(this, drawer, toolbar,
                 R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toogle);
@@ -57,6 +60,7 @@ public class MainActivity extends AppCompatActivity {
             }
             return false;
         });
+
     }
 
     private boolean navigateFragment(int id) {
@@ -74,12 +78,19 @@ public class MainActivity extends AppCompatActivity {
         return false;
     }
 
-    private void showFragment( Fragment fragment) {
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction()
+    private void showFragment(Fragment fragment) {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        List<Fragment> fragments = fragmentManager.getFragments();
+        if (fragments.size() > 0) {
+            Fragment currentFragment = fragments.get(fragments.size() - 1);
+            return;
+        }
+
+        FragmentTransaction transaction = fragmentManager.beginTransaction()
                 .setCustomAnimations(R.animator.slide_in_left, R.animator.slide_in_right, R.animator.slide_out_left, R.animator.slide_out_right)
                 .replace(R.id.fragmentContainer, fragment);
         if (!isLandscapeOrientation) {
-            transaction.addToBackStack("note");
+            transaction.addToBackStack(null);
         }
         transaction.commit();
     }

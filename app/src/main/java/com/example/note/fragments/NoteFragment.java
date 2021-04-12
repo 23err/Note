@@ -104,12 +104,9 @@ public class NoteFragment extends Fragment {
         tvDate.setOnClickListener(view1 -> {
             Calendar calendar = Calendar.getInstance();
             new MaterialStyledDatePickerDialog(getActivity(),
-                    new DatePickerDialog.OnDateSetListener() {
-                        @Override
-                        public void onDateSet(DatePicker datePicker, int i, int i1, int i2) {
-                            String stringDate = String.format("%02d.%02d.%4d", i2, i1, i);
-                            tvDate.setText(stringDate);
-                        }
+                    (datePicker, i, i1, i2) -> {
+                        String stringDate = String.format("%02d.%02d.%4d", i2, i1, i);
+                        tvDate.setText(stringDate);
                     },
                     calendar.get(Calendar.YEAR),
                     calendar.get(Calendar.MONTH),

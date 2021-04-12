@@ -1,8 +1,13 @@
 package com.example.note.fragments;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -23,6 +28,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ListNotesFragment extends Fragment {
+    public static final String VIEWTYPE = "viewtype";
+    public static final String IS_CARD_VIEW_IN_RV = "isCardViewInRV";
     private FloatingActionButton btnAdd;
     private RecyclerView rvNotes;
     private NoteRepository repo;
@@ -31,6 +38,7 @@ public class ListNotesFragment extends Fragment {
     private SearchView searchView;
     private static int lastOpenedNote = -1;
     private boolean isLandscape;
+    private boolean isCardViewRV;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -41,6 +49,7 @@ public class ListNotesFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         isLandscape = getActivity().getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE;
+        setHasOptionsMenu(true);
     }
 
     @Nullable
@@ -53,18 +62,23 @@ public class ListNotesFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         findViews(view);
+        readViewTypeSP();
 
         repo = NoteRepositoryFactory.getInstance();
         noteList = new ArrayList<Note>();
         initNoteList();
 
-        adapter = new NotesListRVAdapter(getContext(), noteList);
-        adapterSetOnItemClick();
-        adapterSetOnRemoveItem();
+        initAdapter();
         rvNotes.setAdapter(adapter);
         btnSetOnClick();
-        searchChange();
 
+    }
+
+    private void initAdapter() {
+        adapter = new NotesListRVAdapter(getContext(), noteList);
+        adapter.setCardView(isCardViewRV);
+        adapterSetOnItemClick();
+        adapterSetOnRemoveItem();
     }
 
     private void initNoteList() {
@@ -88,7 +102,7 @@ public class ListNotesFragment extends Fragment {
         });
     }
 
-    private void searchChange() {
+    private void setSearchViewTextListener(SearchView searchView) {
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -104,7 +118,7 @@ public class ListNotesFragment extends Fragment {
         });
     }
 
-    private void updateNoteList(){
+    private void updateNoteList() {
         updateNoteList(searchView.getQuery().toString());
     }
 
@@ -117,9 +131,7 @@ public class ListNotesFragment extends Fragment {
     private void setFragmentUpdateListener(NoteFragment fragment) {
         fragment.setNoteUpdateListener(note1 -> {
             repo.insertOrUpdateNote(note1);
-            int index = repo.getIndex(note1);
-            lastOpenedNote = index;
-
+            lastOpenedNote = repo.getIndex(note1);;
             updateNoteList();
         });
     }
@@ -136,7 +148,7 @@ public class ListNotesFragment extends Fragment {
         if (!isLandscape) {
             transaction.addToBackStack("note");
         }
-                transaction.commit();
+        transaction.commit();
     }
 
 
@@ -152,11 +164,39 @@ public class ListNotesFragment extends Fragment {
     private void findViews(@NonNull View view) {
         btnAdd = view.findViewById(R.id.btnAdd);
         rvNotes = view.findViewById(R.id.rvNotes);
-        searchView = view.findViewById(R.id.searchView);
-
     }
 
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.note_list_menu, menu);
+        MenuItem menuItem = menu.findItem(R.id.search);
+        searchView = (SearchView) menuItem.getActionView();
+        setSearchViewTextListener(searchView);
+    }
 
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        int resId = item.getItemId();
+        if (resId == R.id.view) {
+            isCardViewRV = !isCardViewRV;
+            saveViewType();
+            initAdapter();
+            rvNotes.setAdapter(adapter);
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
+    private void saveViewType() {
+        SharedPreferences sharedPreferences = requireActivity().getSharedPreferences(VIEWTYPE, Context.MODE_PRIVATE);
+        SharedPreferences.Editor edit = sharedPreferences.edit();
+        edit.putBoolean(IS_CARD_VIEW_IN_RV, isCardViewRV);
+        edit.apply();
+    }
 
+    private void readViewTypeSP(){
+        SharedPreferences sharedPreferences = requireActivity().getSharedPreferences(VIEWTYPE, Context.MODE_PRIVATE);
+        isCardViewRV = sharedPreferences.getBoolean(IS_CARD_VIEW_IN_RV, false);
+    }
 }
