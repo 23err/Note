@@ -92,6 +92,7 @@ public class NotesListRVAdapter extends RecyclerView.Adapter<NotesListRVAdapter.
             tvName = view.findViewById(R.id.tvName);
             tvDate = view.findViewById(R.id.tvDate);
             this.view = view;
+
         }
     }
 
