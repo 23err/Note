@@ -3,6 +3,9 @@ package com.example.note.fragments;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -41,6 +44,7 @@ public class ListNotesFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         isLandscape = getActivity().getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE;
+        setHasOptionsMenu(true);
     }
 
     @Nullable
@@ -63,7 +67,6 @@ public class ListNotesFragment extends Fragment {
         adapterSetOnRemoveItem();
         rvNotes.setAdapter(adapter);
         btnSetOnClick();
-        searchChange();
 
     }
 
@@ -88,7 +91,7 @@ public class ListNotesFragment extends Fragment {
         });
     }
 
-    private void searchChange() {
+    private void setSearchViewTextListener(SearchView searchView) {
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -104,7 +107,7 @@ public class ListNotesFragment extends Fragment {
         });
     }
 
-    private void updateNoteList(){
+    private void updateNoteList() {
         updateNoteList(searchView.getQuery().toString());
     }
 
@@ -136,7 +139,7 @@ public class ListNotesFragment extends Fragment {
         if (!isLandscape) {
             transaction.addToBackStack("note");
         }
-                transaction.commit();
+        transaction.commit();
     }
 
 
@@ -152,11 +155,14 @@ public class ListNotesFragment extends Fragment {
     private void findViews(@NonNull View view) {
         btnAdd = view.findViewById(R.id.btnAdd);
         rvNotes = view.findViewById(R.id.rvNotes);
-        searchView = view.findViewById(R.id.searchView);
-
     }
 
-
-
-
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.note_list_menu, menu);
+        MenuItem menuItem = menu.findItem(R.id.search);
+        searchView = (SearchView) menuItem.getActionView();
+        setSearchViewTextListener(searchView);
+    }
 }

@@ -44,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void initView() {
         Toolbar toolbar = initToolbar();
-        initDrawer(toolbar);
+//        initDrawer(toolbar);
     }
 
     private void initDrawer(Toolbar toolbar) {

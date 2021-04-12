@@ -45,14 +45,13 @@ public class NotesListRVAdapter extends RecyclerView.Adapter<NotesListRVAdapter.
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Note note = notes.get(position);
-        holder.tvName.setText(note.toString());
-        holder.tvDate.setText(note.getFormatDate());
-        holder.view.setOnClickListener(view1 -> {
+        holder.bind(note);
+        holder.itemView.setOnClickListener(view1 -> {
             if (onItemClickListener != null) {
                 onItemClickListener.onClick(view1, note);
             }
         });
-        holder.view.setOnCreateContextMenuListener((contextMenu, view, contextMenuInfo) -> {
+        holder.itemView.setOnCreateContextMenuListener((contextMenu, view, contextMenuInfo) -> {
 
             MenuItem menuItemShare = contextMenu.add(Menu.NONE, ID_REMOVE, Menu.NONE, R.string.share);
             menuItemShare.setOnMenuItemClickListener(menuItem -> {
@@ -85,14 +84,16 @@ public class NotesListRVAdapter extends RecyclerView.Adapter<NotesListRVAdapter.
     public static class ViewHolder extends RecyclerView.ViewHolder {
         public static final int MENU_ITEM_REMOVE = 999;
         final MaterialTextView tvName, tvDate;
-        final View view;
 
         public ViewHolder(@NonNull View view) {
             super(view);
             tvName = view.findViewById(R.id.tvName);
             tvDate = view.findViewById(R.id.tvDate);
-            this.view = view;
+        }
 
+        public void bind(Note note) {
+            tvName.setText(note.toString());
+            tvDate.setText(note.getFormatDate());
         }
     }
 
