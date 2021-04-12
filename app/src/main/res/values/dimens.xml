@@ -17,4 +17,12 @@
     <dimen name="settings_layout_padding">30dp</dimen>
     <dimen name="setting_text_size">20sp</dimen>
     <dimen name="about_text_size">20sp</dimen>
+    <dimen name="card_margin">5dp</dimen>
+    <dimen name="card_border_radius">10dp</dimen>
+    <dimen name="card_elevation">3dp</dimen>
+    <dimen name="card_linear_margin">15dp</dimen>
+    <dimen name="card_name_text_size">25sp</dimen>
+    <dimen name="card_body_margin_top">10dp</dimen>
+    <dimen name="card_body_text_size">15sp</dimen>
+    <dimen name="card_date_text_size">10sp</dimen>
 </resources>

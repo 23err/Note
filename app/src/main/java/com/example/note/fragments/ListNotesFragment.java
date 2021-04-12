@@ -1,5 +1,7 @@
 package com.example.note.fragments;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -20,12 +22,15 @@ import com.example.note.R;
 import com.example.note.beans.Note;
 import com.example.note.repo.NoteRepository;
 import com.example.note.repo.NoteRepositoryFactory;
+import com.google.android.material.datepicker.MaterialStyledDatePickerDialog;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class ListNotesFragment extends Fragment {
+    public static final String VIEWTYPE = "viewtype";
+    public static final String IS_CARD_VIEW_IN_RV = "isCardViewInRV";
     private FloatingActionButton btnAdd;
     private RecyclerView rvNotes;
     private NoteRepository repo;
@@ -34,6 +39,7 @@ public class ListNotesFragment extends Fragment {
     private SearchView searchView;
     private static int lastOpenedNote = -1;
     private boolean isLandscape;
+    private boolean isCardViewRV;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -57,17 +63,23 @@ public class ListNotesFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         findViews(view);
+        readViewTypeSP();
 
         repo = NoteRepositoryFactory.getInstance();
         noteList = new ArrayList<Note>();
         initNoteList();
 
-        adapter = new NotesListRVAdapter(getContext(), noteList);
-        adapterSetOnItemClick();
-        adapterSetOnRemoveItem();
+        initAdapter();
         rvNotes.setAdapter(adapter);
         btnSetOnClick();
 
+    }
+
+    private void initAdapter() {
+        adapter = new NotesListRVAdapter(getContext(), noteList);
+        adapter.setCardView(isCardViewRV);
+        adapterSetOnItemClick();
+        adapterSetOnRemoveItem();
     }
 
     private void initNoteList() {
@@ -120,9 +132,7 @@ public class ListNotesFragment extends Fragment {
     private void setFragmentUpdateListener(NoteFragment fragment) {
         fragment.setNoteUpdateListener(note1 -> {
             repo.insertOrUpdateNote(note1);
-            int index = repo.getIndex(note1);
-            lastOpenedNote = index;
-
+            lastOpenedNote = repo.getIndex(note1);;
             updateNoteList();
         });
     }
@@ -164,5 +174,30 @@ public class ListNotesFragment extends Fragment {
         MenuItem menuItem = menu.findItem(R.id.search);
         searchView = (SearchView) menuItem.getActionView();
         setSearchViewTextListener(searchView);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        int resId = item.getItemId();
+        if (resId == R.id.view) {
+            isCardViewRV = !isCardViewRV;
+            saveViewType();
+            initAdapter();
+            rvNotes.setAdapter(adapter);
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void saveViewType() {
+        SharedPreferences sharedPreferences = requireActivity().getSharedPreferences(VIEWTYPE, Context.MODE_PRIVATE);
+        SharedPreferences.Editor edit = sharedPreferences.edit();
+        edit.putBoolean(IS_CARD_VIEW_IN_RV, isCardViewRV);
+        edit.apply();
+    }
+
+    private void readViewTypeSP(){
+        SharedPreferences sharedPreferences = requireActivity().getSharedPreferences(VIEWTYPE, Context.MODE_PRIVATE);
+        isCardViewRV = sharedPreferences.getBoolean(IS_CARD_VIEW_IN_RV, false);
     }
 }

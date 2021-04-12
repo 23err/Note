@@ -18,4 +18,5 @@
     <string name="about_text">Информация о приложение</string>
     <string name="search">search</string>
     <string name="sort">Сортировать</string>
+    <string name="view">Вид</string>
 </resources>
