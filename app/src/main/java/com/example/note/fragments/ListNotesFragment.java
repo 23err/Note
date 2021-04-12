@@ -22,7 +22,6 @@ import com.example.note.R;
 import com.example.note.beans.Note;
 import com.example.note.repo.NoteRepository;
 import com.example.note.repo.NoteRepositoryFactory;
-import com.google.android.material.datepicker.MaterialStyledDatePickerDialog;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;

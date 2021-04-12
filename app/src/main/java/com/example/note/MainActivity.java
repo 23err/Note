@@ -1,5 +1,8 @@
 package com.example.note;
 
+import android.content.res.Configuration;
+import android.os.Bundle;
+
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -8,12 +11,6 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
-
-import android.content.res.Configuration;
-import android.os.Bundle;
-import android.view.View;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.note.beans.Note;
 import com.example.note.fragments.ListNotesFragment;
@@ -36,17 +33,14 @@ public class MainActivity extends AppCompatActivity {
 
         checkLandscape();
         showFragmentDependOrientation();
-
         initView();
-
-
     }
 
 
 
     private void initView() {
         Toolbar toolbar = initToolbar();
-//        initDrawer(toolbar);
+        initDrawer(toolbar);
     }
 
     private void initDrawer(Toolbar toolbar) {
