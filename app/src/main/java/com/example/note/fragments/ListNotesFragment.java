@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -75,10 +76,33 @@ public class ListNotesFragment extends Fragment {
     }
 
     private void initAdapter() {
-        adapter = new NotesListRVAdapter(getContext(), noteList);
+        adapter = new NotesListRVAdapter(getContext(), noteList, this);
         adapter.setCardView(isCardViewRV);
         adapterSetOnItemClick();
         adapterSetOnRemoveItem();
+
+    }
+
+    @Override
+    public void onCreateContextMenu(@NonNull ContextMenu menu, @NonNull View v, @Nullable ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        requireActivity().getMenuInflater().inflate(R.menu.context_menu_recycler_view, menu);
+
+    }
+
+    @Override
+    public boolean onContextItemSelected(@NonNull MenuItem item) {
+        int resId = item.getItemId();
+        int position = adapter.getPosition();
+        switch (resId) {
+            case R.id.itemRemove:
+                repo.removeNote(position);
+                noteList.remove(position);
+                adapter.notifyItemRemoved(position);
+
+                return true;
+        }
+        return super.onContextItemSelected(item);
     }
 
     private void initNoteList() {
