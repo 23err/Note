@@ -19,8 +19,10 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.note.MainActivity;
 import com.example.note.R;
 import com.example.note.beans.Note;
+import com.example.note.observe.Publisher;
 import com.example.note.repo.NoteRepository;
 import com.example.note.repo.NoteRepositoryFactory;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -40,10 +42,17 @@ public class ListNotesFragment extends Fragment {
     private static int lastOpenedNote = -1;
     private boolean isLandscape;
     private boolean isCardViewRV;
+    private Publisher publisher;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+    }
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        publisher = ((MainActivity)getActivity()).getPublisher();
     }
 
     @Override
@@ -96,7 +105,7 @@ public class ListNotesFragment extends Fragment {
         int position = adapter.getPosition();
         switch (resId) {
             case R.id.itemRemove:
-                repo.removeNote(position);
+                repo.remove(position);
                 noteList.remove(position);
                 adapter.notifyItemRemoved(position);
 
@@ -106,12 +115,12 @@ public class ListNotesFragment extends Fragment {
     }
 
     private void initNoteList() {
-        noteList.addAll(repo.getNoteList());
+        noteList.addAll(repo.getList());
     }
 
     private void adapterSetOnRemoveItem() {
         adapter.setOnRemoveItemListener(note -> {
-            repo.removeNote(note);
+            repo.remove(note);
             updateNoteList();
             adapter.notifyDataSetChanged();
         });
@@ -121,7 +130,7 @@ public class ListNotesFragment extends Fragment {
     private void adapterSetOnItemClick() {
         adapter.setOnItemClickListener((view1, note) -> {
             NoteFragment fragment = NoteFragment.getInstance(note);
-            setFragmentUpdateListener(fragment);
+            subscribeToFragment();
             showFragment(fragment);
         });
     }
@@ -148,16 +157,26 @@ public class ListNotesFragment extends Fragment {
 
     private void updateNoteList(String newText) {
         noteList.clear();
-        noteList.addAll(repo.findNotes(newText));
+        noteList.addAll(repo.find(newText));
         adapter.notifyDataSetChanged();
     }
 
-    private void setFragmentUpdateListener(NoteFragment fragment) {
-        fragment.setNoteUpdateListener(note1 -> {
-            repo.insertOrUpdateNote(note1);
-            lastOpenedNote = repo.getIndex(note1);;
-            updateNoteList();
+    private void subscribeToFragment() {
+        publisher.subscribe((note, isNew) -> {
+            int ind;
+            if (isNew) {
+                repo.insert(note);
+                noteList.add(note);
+                ind = repo.getSize()-1;
+                adapter.notifyItemInserted(ind);
+            } else {
+                repo.update(note);
+                ind = repo.getIndex(note);
+                adapter.notifyItemChanged(ind);
+            }
+            lastOpenedNote = ind;
         });
+
     }
 
     public static int getLastOpenedNote() {
@@ -178,9 +197,8 @@ public class ListNotesFragment extends Fragment {
 
     private void btnSetOnClick() {
         btnAdd.setOnClickListener(view1 -> {
-            Note note = new Note();
-            NoteFragment fragment = NoteFragment.getInstance(note);
-            setFragmentUpdateListener(fragment);
+            NoteFragment fragment = NoteFragment.getInstance();
+            subscribeToFragment();
             showFragment(fragment);
         });
     }

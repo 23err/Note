@@ -15,6 +15,7 @@ import androidx.fragment.app.FragmentTransaction;
 import com.example.note.beans.Note;
 import com.example.note.fragments.ListNotesFragment;
 import com.example.note.fragments.NoteFragment;
+import com.example.note.observe.Publisher;
 import com.example.note.repo.NoteRepository;
 import com.example.note.repo.NoteRepositoryFactory;
 import com.google.android.material.navigation.NavigationView;
@@ -23,19 +24,29 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    protected boolean isLandscapeOrientation;
+    private boolean isLandscapeOrientation;
 
+    private Publisher publisher;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        initPublisher();
+
         checkLandscape();
         showFragmentDependOrientation();
         initView();
     }
 
+    private void initPublisher() {
+        publisher = new Publisher();
+    }
+
+    public Publisher getPublisher(){
+        return publisher;
+    }
 
 
     private void initView() {
@@ -108,7 +119,7 @@ public class MainActivity extends AppCompatActivity {
             Note note;
             int lastOpenedNote = ListNotesFragment.getLastOpenedNote();
             if (repo.getSize() > 0 && lastOpenedNote != -1) {
-                note = repo.getNote(lastOpenedNote);
+                note = repo.get(lastOpenedNote);
             } else {
                 note = new Note();
             }

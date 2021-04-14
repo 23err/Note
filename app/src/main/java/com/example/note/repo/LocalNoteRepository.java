@@ -20,10 +20,10 @@ public class LocalNoteRepository implements NoteRepository {
     }
 
     private void fillNoteList() {
-        insertNote(new Note("first note", "aklsjhfkkhsdf askdjfhka"));
-        insertNote(new Note("second note", "aklsjhfkkhsdf askdjfhka"));
-        insertNote(new Note("", "third note in body"));
-        insertNote(new Note("ajsd", "aklsjhfkkhsdf askdjfhka"));
+        insert(new Note("first note", "aklsjhfkkhsdf askdjfhka"));
+        insert(new Note("second note", "aklsjhfkkhsdf askdjfhka"));
+        insert(new Note("", "third note in body"));
+        insert(new Note("ajsd", "aklsjhfkkhsdf askdjfhka"));
 //        for (int i = 0; i < 30; i++) {
 //            insertNote(new Note("note test", "hello"));
 //
@@ -33,7 +33,7 @@ public class LocalNoteRepository implements NoteRepository {
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
-    public List<Note> findNotes(String text) {
+    public List<Note> find(String text) {
         final String finalText = text.toLowerCase().trim();
         if (finalText.length()==0) {
             return noteList;
@@ -47,7 +47,11 @@ public class LocalNoteRepository implements NoteRepository {
     }
 
     @Override
-    public void updateNote(Note note) {
+    public void update(Note note) {
+        int ind = noteList.indexOf(note);
+        if (ind!=-1) {
+            noteList.set(ind, note);
+        }
     }
 
     @Override
@@ -56,33 +60,20 @@ public class LocalNoteRepository implements NoteRepository {
     }
 
     @Override
-    public void insertNote(Note note) {
-        noteList.add(note);
+    public void insert(Note note) {
+        if (!note.isEmpty())
+            noteList.add(note);
     }
 
-    @Override
-    public void insertOrUpdateNote(Note note) {
-        int noteIndex = getIndex(note);
-        if (noteIndex >= 0) {
-            if (note.isEmpty()) {
-                removeNote(noteIndex);
-            } else {
-                updateNote(note);
-            }
-        } else {
-            if (!note.isEmpty()) {
-                insertNote(note);
-            }
-        }
-    }
+
 
     @Override
-    public Note getNote(int index) {
+    public Note get(int index) {
         return noteList.get(index);
     }
 
     @Override
-    public List<Note> getNoteList() {
+    public List<Note> getList() {
         return noteList;
     }
 
@@ -92,12 +83,12 @@ public class LocalNoteRepository implements NoteRepository {
     }
 
     @Override
-    public void removeNote(int index) {
+    public void remove(int index) {
         noteList.remove(index);
     }
 
     @Override
-    public void removeNote(Note note) {
+    public void remove(Note note) {
         int index = noteList.indexOf(note);
         if (index >= 0) {
             noteList.remove(index);

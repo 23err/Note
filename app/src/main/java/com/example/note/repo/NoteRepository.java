@@ -6,23 +6,21 @@ import java.util.List;
 
 public interface NoteRepository {
 
-    List<Note> findNotes(String text);
-
-    void updateNote(Note note);
+    List<Note> find(String text);
 
     int getIndex(Note note);
 
-    void insertNote(Note note);
+    void insert(Note note);
 
-    void insertOrUpdateNote(Note note);
+    void update(Note note);
 
-    Note getNote(int index);
+    Note get(int index);
 
-    List<Note> getNoteList();
+    List<Note> getList();
 
     int getSize();
 
-    void removeNote(int index);
+    void remove(int index);
 
-    void removeNote(Note note);
+    void remove(Note note);
 }

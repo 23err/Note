@@ -1,6 +1,8 @@
 package com.example.note.fragments;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -12,8 +14,10 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.example.note.MainActivity;
 import com.example.note.R;
 import com.example.note.beans.Note;
+import com.example.note.observe.Publisher;
 import com.google.android.material.datepicker.MaterialStyledDatePickerDialog;
 import com.google.android.material.textview.MaterialTextView;
 
@@ -30,18 +34,27 @@ public class NoteFragment extends Fragment {
     private OnNoteUpdateListener noteUpdateListener;
 
     private SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
+    private boolean isNew = false;
+    private Publisher publisher;
 
     public interface OnNoteUpdateListener {
         void onUpdateNote(Note note);
     };
 
-    public static NoteFragment getInstance(Note note) {
+    public static NoteFragment getInstance() {
         NoteFragment noteFragment = new NoteFragment();
+        return noteFragment;
+    }
+
+    public static NoteFragment getInstance(Note note) {
+        NoteFragment noteFragment = getInstance();
         Bundle args = new Bundle();
         args.putParcelable(NOTE_PARCELABLE_KEY, note);
         noteFragment.setArguments(args);
         return noteFragment;
     }
+
+
 
 
     @Override
@@ -52,6 +65,7 @@ public class NoteFragment extends Fragment {
             note = args.getParcelable(NOTE_PARCELABLE_KEY);
         } else {
             note = new Note("", "");
+            isNew = true;
         }
     }
 
@@ -70,8 +84,22 @@ public class NoteFragment extends Fragment {
     }
 
     @Override
-    public void onPause() {
-        super.onPause();
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        MainActivity activity = (MainActivity)getActivity();
+        publisher = activity.getPublisher();
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        publisher = null;
+
+    }
+
+
+
+    private void populateNote() {
         note.setBody(etBody.getText().toString());
         note.setName(etName.getText().toString());
         tvDate.getText().toString();
@@ -81,17 +109,19 @@ public class NoteFragment extends Fragment {
             e.printStackTrace();
             Log.e("parse", "parce date in note exception");
         }
-        notifyNoteUpdate();
     }
 
-    public void setNoteUpdateListener(OnNoteUpdateListener listener) {
-        noteUpdateListener = listener;
+    @Override
+    public void onStop() {
+        populateNote();
+        super.onStop();
+
     }
 
-    private void notifyNoteUpdate() {
-        if (noteUpdateListener != null) {
-            noteUpdateListener.onUpdateNote(note);
-        }
+    @Override
+    public void onDestroy() {
+        publisher.notifySingle(note, isNew);
+        super.onDestroy();
     }
 
     private void setValues() {
