@@ -2,13 +2,11 @@ package com.example.note.fragments;
 
 import android.content.Context;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.note.R;
@@ -24,14 +22,19 @@ public class NotesListRVAdapter extends RecyclerView.Adapter<NotesListRVAdapter.
     private OnItemClickListener onItemClickListener;
     private OnRemoveItemListener onRemoveItemListener;
     private boolean isCardViewItem = false;
+    private Fragment fragment;
+    private int position = 0;
+
 
     public void setOnRemoveItemListener(OnRemoveItemListener onRemoveItemListener) {
         this.onRemoveItemListener = onRemoveItemListener;
     }
 
-    public NotesListRVAdapter(Context context, List<Note> notes) {
+    public NotesListRVAdapter(Context context, List<Note> notes, Fragment fragment) {
         this.notes = notes;
         inflater = LayoutInflater.from(context);
+        this.fragment = fragment;
+
     }
 
     public void setCardView(boolean isCardViewItem) {
@@ -65,25 +68,28 @@ public class NotesListRVAdapter extends RecyclerView.Adapter<NotesListRVAdapter.
                 onItemClickListener.onClick(view1, note);
             }
         });
-        holder.itemView.setOnCreateContextMenuListener((contextMenu, view, contextMenuInfo) -> {
-
-            MenuItem menuItemShare = contextMenu.add(Menu.NONE, ID_REMOVE, Menu.NONE, R.string.share);
-            menuItemShare.setOnMenuItemClickListener(menuItem -> {
-                Toast.makeText(view.getContext(), "Поделились заметкой", Toast.LENGTH_SHORT).show();
-                return true;
-            });
-            MenuItem menuItemRemove = contextMenu.add(Menu.NONE, ID_REMOVE, Menu.NONE, R.string.remove);
-            menuItemRemove.setOnMenuItemClickListener(menuItem1 -> {
-                if (onRemoveItemListener != null) {
-                    onRemoveItemListener.onRemove(note);
-                }
-                return true;
-            });
-
-        });
+//        holder.itemView.setOnCreateContextMenuListener((contextMenu, view, contextMenuInfo) -> {
+//
+//            MenuItem menuItemShare = contextMenu.add(Menu.NONE, ID_REMOVE, Menu.NONE, R.string.share);
+//            menuItemShare.setOnMenuItemClickListener(menuItem -> {
+//                Toast.makeText(view.getContext(), "Поделились заметкой", Toast.LENGTH_SHORT).show();
+//                return true;
+//            });
+//            MenuItem menuItemRemove = contextMenu.add(Menu.NONE, ID_REMOVE, Menu.NONE, R.string.remove);
+//            menuItemRemove.setOnMenuItemClickListener(menuItem1 -> {
+//                if (onRemoveItemListener != null) {
+//                    onRemoveItemListener.onRemove(note);
+//                }
+//                return true;
+//            });
+//
+//        });
 
     }
 
+    public int getPosition() {
+        return position;
+    }
 
     public void setOnItemClickListener(OnItemClickListener listener) {
         this.onItemClickListener = listener;
@@ -95,7 +101,7 @@ public class NotesListRVAdapter extends RecyclerView.Adapter<NotesListRVAdapter.
     }
 
 
-    public static class ViewHolder extends RecyclerView.ViewHolder {
+    public class ViewHolder extends RecyclerView.ViewHolder {
         public static final int MENU_ITEM_REMOVE = 999;
         final MaterialTextView tvName, tvDate, tvBody;
 
@@ -104,6 +110,22 @@ public class NotesListRVAdapter extends RecyclerView.Adapter<NotesListRVAdapter.
             tvName = view.findViewById(R.id.tvName);
             tvDate = view.findViewById(R.id.tvDate);
             tvBody = view.findViewById(R.id.tvBody);
+            registerContextMenu(view);
+            setOnLongClick(view);
+
+        }
+
+        private void setOnLongClick(@NonNull View view) {
+            view.setOnLongClickListener(view1 -> {
+                position = getLayoutPosition();
+                return false;
+            });
+        }
+
+        private void registerContextMenu(@NonNull View view) {
+            if (fragment != null) {
+                fragment.registerForContextMenu(view);
+            }
         }
 
         public void bind(Note note) {
