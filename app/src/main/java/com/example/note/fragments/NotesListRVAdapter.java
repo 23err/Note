@@ -25,6 +25,7 @@ public class NotesListRVAdapter extends RecyclerView.Adapter<NotesListRVAdapter.
     private OnRemoveItemListener onRemoveItemListener;
     private boolean isCardViewItem = false;
 
+
     public void setOnRemoveItemListener(OnRemoveItemListener onRemoveItemListener) {
         this.onRemoveItemListener = onRemoveItemListener;
     }
