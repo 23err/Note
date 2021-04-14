@@ -1,14 +1,36 @@
 package com.example.note.beans;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
-public class Note {
+public class Note implements Parcelable {
     private String name, body;
     private Date date;
 
     private final SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
+
+    protected Note(Parcel in) {
+        name = in.readString();
+        body = in.readString();
+        date = new Date(in.readLong());
+    }
+
+    public static final Creator<Note> CREATOR = new Creator<Note>() {
+        @Override
+        public Note createFromParcel(Parcel in) {
+            return new Note(in);
+        }
+
+        @Override
+        public Note[] newArray(int size) {
+            return new Note[size];
+        }
+    };
 
     public String getName() {
         return name;
@@ -74,4 +96,15 @@ public class Note {
     }
 
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeString(name);
+        parcel.writeString(body);
+        parcel.writeLong(date.getTime());
+    }
 }

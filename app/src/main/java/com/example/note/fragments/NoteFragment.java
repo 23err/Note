@@ -1,19 +1,15 @@
 package com.example.note.fragments;
 
 import android.annotation.SuppressLint;
-import android.app.DatePickerDialog;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 
 import com.example.note.R;
@@ -27,6 +23,7 @@ import java.util.Calendar;
 
 public class NoteFragment extends Fragment {
 
+    public static final String NOTE_PARCELABLE_KEY = "Note";
     private MaterialTextView tvDate;
     private EditText etBody, etName;
     private Note note;
@@ -40,18 +37,22 @@ public class NoteFragment extends Fragment {
 
     public static NoteFragment getInstance(Note note) {
         NoteFragment noteFragment = new NoteFragment();
-        noteFragment.note = note;
+        Bundle args = new Bundle();
+        args.putParcelable(NOTE_PARCELABLE_KEY, note);
+        noteFragment.setArguments(args);
         return noteFragment;
-    }
-
-    public NoteFragment(){
-        note = new Note("","");
     }
 
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Bundle args = getArguments();
+        if (args != null){
+            note = args.getParcelable(NOTE_PARCELABLE_KEY);
+        } else {
+            note = new Note("", "");
+        }
     }
 
     @Nullable
