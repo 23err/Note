@@ -75,7 +75,9 @@ public class ListNotesFragment extends Fragment {
         readViewTypeSP();
 
         repo = NoteRepositoryFactory.getInstance();
-        noteList = new ArrayList<Note>();
+        repo.init(()->adapter.notifyDataSetChanged());
+        noteList = repo.getList();
+//        noteList = new ArrayList<Note>();
         initNoteList();
 
         initAdapter();
@@ -185,6 +187,7 @@ public class ListNotesFragment extends Fragment {
 
 
     private void showFragment(Fragment fragment) {
+
         FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction()
                 .setCustomAnimations(R.animator.slide_in_left, R.animator.slide_in_right, R.animator.slide_out_left, R.animator.slide_out_right)
                 .replace(R.id.fragmentContainer, fragment);

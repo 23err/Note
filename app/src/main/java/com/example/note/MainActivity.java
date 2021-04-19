@@ -38,7 +38,10 @@ public class MainActivity extends AppCompatActivity {
         checkLandscape();
         showFragmentDependOrientation();
         initView();
+
     }
+
+
 
     private void initPublisher() {
         publisher = new Publisher();

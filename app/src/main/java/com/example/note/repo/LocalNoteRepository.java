@@ -11,25 +11,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class LocalNoteRepository implements NoteRepository {
-    private List<Note> noteList;
-
-    public LocalNoteRepository() {
-        noteList = new ArrayList<>();
-        fillNoteList();
-    }
-
-    private void fillNoteList() {
-        insert(new Note("first note", "aklsjhfkkhsdf askdjfhka"));
-        insert(new Note("second note", "aklsjhfkkhsdf askdjfhka"));
-        insert(new Note("", "third note in body"));
-        insert(new Note("ajsd", "aklsjhfkkhsdf askdjfhka"));
-//        for (int i = 0; i < 30; i++) {
-//            insertNote(new Note("note test", "hello"));
-//
-//        }
-    }
-
+public abstract class LocalNoteRepository implements NoteRepository {
+    protected List<Note> noteList = new ArrayList<>();
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override

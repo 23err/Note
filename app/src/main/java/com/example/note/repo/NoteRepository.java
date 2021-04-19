@@ -6,6 +6,8 @@ import java.util.List;
 
 public interface NoteRepository {
 
+    void init(OnInitListener listener);
+
     List<Note> find(String text);
 
     int getIndex(Note note);
