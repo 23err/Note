@@ -1,12 +1,14 @@
 package com.example.note.repo;
 
 import com.example.note.beans.Note;
+import com.example.note.repo.listeners.OnInitListener;
+import com.example.note.repo.listeners.OnInsertListener;
+import com.example.note.repo.listeners.OnRemoveListener;
+import com.example.note.repo.listeners.OnUpdateListener;
 
 import java.util.List;
 
 public interface NoteRepository {
-
-    void init(OnInitListener listener);
 
     List<Note> find(String text);
 
@@ -25,4 +27,15 @@ public interface NoteRepository {
     void remove(int index);
 
     void remove(Note note);
+
+    NoteRepository init();
+
+    NoteRepository setOnInitListener(OnInitListener listener);
+
+    NoteRepository setOnRemoveListener(OnRemoveListener listener);
+
+    NoteRepository setOnUpdateListener(OnUpdateListener listener);
+
+    NoteRepository setOnInsertListener(OnInsertListener listener);
+
 }

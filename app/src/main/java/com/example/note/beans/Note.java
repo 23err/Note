@@ -7,6 +7,8 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Note implements Parcelable {
 
@@ -123,4 +125,5 @@ public class Note implements Parcelable {
         parcel.writeString(body);
         parcel.writeLong(date.getTime());
     }
+
 }
