@@ -112,7 +112,9 @@ public class NoteFragment extends Fragment {
 
     @Override
     public void onDestroy() {
-        publisher.notifySingle(note, isNew);
+        if (publisher != null) {
+            publisher.notifySingle(note, isNew);
+        }
         super.onDestroy();
     }
 

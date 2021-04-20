@@ -54,6 +54,9 @@ public class LocalWithCloudRepository extends LocalNoteRepository {
 
     @Override
     public void insert(Note note) {
+        if (note.isEmpty()) {
+            return;
+        }
         super.insert(note);
         updateSuperList();
         onInsert();
@@ -70,6 +73,8 @@ public class LocalWithCloudRepository extends LocalNoteRepository {
 
     @Override
     public void update(Note note) {
+        if (super.getIndex(note) == -1)
+            return;
         super.update(note);
         int index = super.getIndex(note);
         onUpdate(index);

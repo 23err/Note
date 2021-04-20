@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface NoteRepository {
 
-    List<Note> find(String text);
+    NoteRepository search(String text);
 
     int getIndex(Note note);
 

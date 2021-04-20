@@ -50,16 +50,11 @@ public class ListNotesFragment extends Fragment {
     }
 
     @Override
-    public void onAttach(@NonNull Context context) {
-        super.onAttach(context);
-        publisher = ((MainActivity) getActivity()).getPublisher();
-    }
-
-    @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         isLandscape = getActivity().getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE;
         setHasOptionsMenu(true);
+        publisher = ((MainActivity) requireActivity()).getPublisher();
     }
 
     @Nullable
@@ -92,7 +87,12 @@ public class ListNotesFragment extends Fragment {
                 .setOnInitListener(adapter::notifyDataSetChanged)
                 .setOnInsertListener(adapter::notifyItemInserted)
                 .setOnUpdateListener(adapter::notifyItemChanged)
-                .setOnRemoveListener(adapter::notifyItemRemoved)
+                .setOnRemoveListener(index -> {
+                    adapter.notifyItemRemoved(index);
+                    if (index == lastOpenedNote) {
+                        lastOpenedNote = -1;
+                    }
+                })
                 .init();
     }
 
@@ -115,7 +115,7 @@ public class ListNotesFragment extends Fragment {
 
             @Override
             public boolean onQueryTextChange(String newText) {
-//                updateNoteList(newText);
+                repo.search(newText);
                 return true;
             }
         });
@@ -199,6 +199,7 @@ public class ListNotesFragment extends Fragment {
         if (resId == R.id.view) {
             isCardViewRV = !isCardViewRV;
             saveViewType();
+            adapter.setCardView(isCardViewRV);
             rvNotes.setAdapter(adapter);
             return true;
         }

@@ -15,22 +15,24 @@ public abstract class LocalNoteRepository implements NoteRepository {
     private List<Note> resultNotes = new ArrayList<>();
     private List<Note> allNotes = new ArrayList<>();
 
-    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
-    public List<Note> find(String text) {
+    public NoteRepository search(String text) {
         final String finalText = text.toLowerCase().trim();
         if (finalText.length() == 0) {
             resultNotesInit(allNotes);
-            return resultNotes;
+            return this;
         }
 
-        List<Note> list = allNotes.stream()
-                .filter(note -> {
-                    return (note.getName().toLowerCase().contains(finalText) || note.getBody().toLowerCase().contains(finalText));
-                })
-                .collect(Collectors.toList());
+        List<Note> list = null;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+            list = allNotes.stream()
+                    .filter(note -> {
+                        return (note.getName().toLowerCase().contains(finalText) || note.getBody().toLowerCase().contains(finalText));
+                    })
+                    .collect(Collectors.toList());
+        }
         resultNotesInit(list);
-        return resultNotes;
+        return this;
     }
 
     public void updateList() {
