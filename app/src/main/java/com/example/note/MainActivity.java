@@ -15,6 +15,7 @@ import androidx.fragment.app.FragmentTransaction;
 import com.example.note.beans.Note;
 import com.example.note.fragments.ListNotesFragment;
 import com.example.note.fragments.NoteFragment;
+import com.example.note.fragments.StartFragment;
 import com.example.note.observe.Publisher;
 import com.example.note.repo.NoteRepository;
 import com.example.note.repo.NoteRepositoryFactory;
@@ -125,7 +126,9 @@ public class MainActivity extends AppCompatActivity {
             }
             fragment = NoteFragment.getInstance(note);
         } else {
-            fragment = new ListNotesFragment();
+//            fragment = new ListNotesFragment();
+            fragment = new StartFragment();
+
         }
 
         getSupportFragmentManager().beginTransaction()
