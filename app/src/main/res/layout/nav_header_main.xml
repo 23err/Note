@@ -1,57 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    >
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:background="@drawable/side_nav_bar"
-        android:layout_height="wrap_content">
-        <LinearLayout
+    android:background="@drawable/side_nav_bar"
+    android:orientation="vertical">
+
+    <com.google.android.gms.common.SignInButton
+        android:id="@+id/sign_in_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center_horizontal"
+        android:layout_marginBottom="@dimen/sign_in_margin_bottom"
+        app:buttonSize="icon_only" />
+
+    <ImageView
+        android:id="@+id/sign_out_button"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_gravity="end|bottom"
+        android:layout_marginEnd="@dimen/sign_in_margin_bottom"
+        android:layout_marginBottom="@dimen/sign_in_margin_bottom"
+        android:src="@drawable/ic_baseline_exit_to_app_128" />
+
+    <LinearLayout
+        android:id="@+id/profile"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/nav_header_height"
+        android:gravity="bottom"
+        android:orientation="vertical"
+        android:padding="@dimen/nav_user_padding"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark">
+
+
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="wrap_content"
-            android:layout_height="@dimen/nav_header_height"
-            android:gravity="bottom"
-            android:orientation="vertical"
-            android:padding="@dimen/nav_user_padding"
-            android:theme="@style/ThemeOverlay.AppCompat.Dark">
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="@dimen/card_photo_radius">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/ivAvatar"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                app:srcCompat="@drawable/korzhik" />
+        </com.google.android.material.card.MaterialCardView>
+
+        <TextView
+            android:id="@+id/tvUserName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/korzhik"
+            android:textColor="?attr/colorOnPrimary"
+            android:textSize="@dimen/nav_header_dimen" />
+
+        <TextView
+            android:id="@+id/tvMail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/test_mail"
+            android:textColor="?attr/navMailColor"
+            android:textSize="@dimen/nav_mail_text_size" />
+    </LinearLayout>
+</FrameLayout>
 
 
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="wrap_content"
-                app:cardCornerRadius="@dimen/card_photo_radius"
-                android:layout_height="wrap_content">
-
-                <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/ivAvatar"
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
-                    app:srcCompat="@drawable/korzhik"
-                    />
-            </com.google.android.material.card.MaterialCardView>
-
-            <TextView
-                android:id="@+id/tvUserName"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/korzhik"
-                android:layout_gravity="center"
-                android:textColor="?attr/colorOnPrimary"
-                android:textSize="@dimen/nav_header_dimen" />
-
-            <TextView
-                android:id="@+id/tvMail"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:text="@string/test_mail"
-                android:textColor="?attr/navMailColor"
-                android:textSize="@dimen/nav_mail_text_size" />
-        </LinearLayout>
-    </FrameLayout>
-
-
-
-</LinearLayout>

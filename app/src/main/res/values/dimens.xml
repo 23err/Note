@@ -25,4 +25,6 @@
     <dimen name="card_body_margin_top">10dp</dimen>
     <dimen name="card_body_text_size">15sp</dimen>
     <dimen name="card_date_text_size">10sp</dimen>
+    <dimen name="sign_in_margin_bottom">20dp</dimen>
+    <dimen name="button_exit_size">24dp</dimen>
 </resources>

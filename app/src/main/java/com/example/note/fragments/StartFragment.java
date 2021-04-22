@@ -2,10 +2,14 @@ package com.example.note.fragments;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.AppCompatImageView;
 import androidx.fragment.app.Fragment;
 
 import android.util.Log;
@@ -13,9 +17,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.note.DownLoadImageTask;
+import com.example.note.Navigation;
 import com.example.note.R;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -26,6 +33,11 @@ import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.button.MaterialButton;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+
 public class StartFragment extends Fragment {
 
     public static final int RC_SIGN_IN = 40404;
@@ -35,6 +47,7 @@ public class StartFragment extends Fragment {
     private TextView emailView;
     private GoogleSignInClient googleSignInClient;
     private Button continue_;
+    private AppCompatImageView ivAva;
 
     public static StartFragment newInstance() {
         StartFragment fragment = new StartFragment();
@@ -46,11 +59,6 @@ public class StartFragment extends Fragment {
         super.onCreate(savedInstanceState);
     }
 
-    @Override
-    public void onAttach(@NonNull Context context) {
-        super.onAttach(context);
-
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -69,7 +77,16 @@ public class StartFragment extends Fragment {
         GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(getContext());
         if (account != null) {
             disableSign();
-            updateUI(account.getEmail());
+            updateUI(account.getEmail(), account.getPhotoUrl().toString());
+            Toast.makeText(getContext(), account.getDisplayName(), Toast.LENGTH_SHORT).show();
+            Log.d(TAG, account.getDisplayName());
+            Log.d(TAG, String.valueOf(account.getPhotoUrl()));
+            Log.d(TAG, String.valueOf(account.getEmail()));
+
+//            if (avatarUrl != null) {
+//                new DownLoadImageTask(ivAva).execute(avatarUrl);
+//            }
+
         }
     }
 
@@ -87,10 +104,13 @@ public class StartFragment extends Fragment {
         buttonSignIn.setOnClickListener(view1 -> signIn());
         emailView = view.findViewById(R.id.email);
         continue_ = view.findViewById(R.id.continue_);
+        ivAva = view.findViewById(R.id.ivAvatar);
         continue_.setOnClickListener(view1 -> {
+            ListNotesFragment fragment = new ListNotesFragment();
+            Navigation navigation = new Navigation(requireActivity());
+            navigation.showFragment(fragment, true);
             Toast.makeText(getActivity(), "navigate to next fragment", Toast.LENGTH_SHORT).show();
         });
-
         buttonSignOut = view.findViewById(R.id.sign_out_button);
         buttonSignOut.setOnClickListener(view1 -> singOut());
     }
@@ -99,6 +119,7 @@ public class StartFragment extends Fragment {
     private void initGoogleSign() {
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestEmail()
+                .requestIdToken(getString(R.string.client_id_google))
                 .build();
         googleSignInClient = GoogleSignIn.getClient(getContext(), gso);
     }
@@ -113,7 +134,7 @@ public class StartFragment extends Fragment {
     private void singOut() {
         googleSignInClient.signOut()
                 .addOnCompleteListener(task -> {
-                    updateUI("");
+                    updateUI("", null);
                     enableSign();
                 });
     }
@@ -121,6 +142,7 @@ public class StartFragment extends Fragment {
     private void enableSign() {
         buttonSignIn.setEnabled(true);
         continue_.setEnabled(false);
+        buttonSignOut.setEnabled(false);
     }
 
     private void disableSign() {
@@ -129,17 +151,25 @@ public class StartFragment extends Fragment {
         buttonSignOut.setEnabled(true);
     }
 
-    private void updateUI(String email) {
+    private void updateUI(String email, String urlAvatar) {
         emailView.setText(email);
+        if (urlAvatar != null) {
+            new DownLoadImageTask(ivAva).execute(urlAvatar);
+        } else {
+            ivAva.setImageBitmap(null);
+        }
+
     }
 
     private void handleSignInResult(Task<GoogleSignInAccount> completeTask) {
         try {
             GoogleSignInAccount account = completeTask.getResult(ApiException.class);
             disableSign();
-            updateUI(account.getEmail());
+            updateUI(account.getEmail(), account.getPhotoUrl().toString());
         } catch (ApiException e) {
             Log.w(TAG, "signInResult: failed code=" + e.getStatusCode());
         }
     }
+
+
 }
