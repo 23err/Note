@@ -20,6 +20,7 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.note.MainActivity;
+import com.example.note.Navigation;
 import com.example.note.R;
 import com.example.note.beans.Note;
 import com.example.note.observe.Publisher;
@@ -96,12 +97,11 @@ public class ListNotesFragment extends Fragment {
                 .init();
     }
 
-
     private void adapterSetOnItemClick() {
         adapter.setOnItemClickListener((view1, note) -> {
             NoteFragment fragment = NoteFragment.getInstance(note);
-            subscribeToFragment();
             showFragment(fragment);
+            subscribeToFragment();
         });
     }
 
@@ -160,14 +160,7 @@ public class ListNotesFragment extends Fragment {
 
 
     private void showFragment(Fragment fragment) {
-
-        FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction()
-                .setCustomAnimations(R.animator.slide_in_left, R.animator.slide_in_right, R.animator.slide_out_left, R.animator.slide_out_right)
-                .replace(R.id.fragmentContainer, fragment);
-        if (!isLandscape) {
-            transaction.addToBackStack(null);
-        }
-        transaction.commit();
+        new Navigation(requireActivity()).setCustomAnimation(true).showFragment(fragment, !isLandscape);
     }
 
 

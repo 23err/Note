@@ -3,7 +3,6 @@ package com.example.note;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -17,13 +16,10 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 
 import com.example.note.beans.Note;
 import com.example.note.fragments.ListNotesFragment;
 import com.example.note.fragments.NoteFragment;
-import com.example.note.fragments.StartFragment;
 import com.example.note.observe.Publisher;
 import com.example.note.repo.NoteRepository;
 import com.example.note.repo.NoteRepositoryFactory;
@@ -176,28 +172,20 @@ public class MainActivity extends AppCompatActivity {
     private boolean navigateFragment(int id) {
         switch (id) {
             case R.id.action_settings:
-                showFragment(new SettingsFragment());
+                showFragment(new SettingsFragment(), false);
                 return true;
             case R.id.action_about:
-                showFragment(new AboutFragment());
+                showFragment(new AboutFragment(),false);
                 return true;
             case R.id.action_main:
-                showFragment(new ListNotesFragment());
+                showFragment(new ListNotesFragment(), false);
                 return true;
         }
         return false;
     }
 
-    private void showFragment(Fragment fragment) {
-        FragmentManager fragmentManager = getSupportFragmentManager();
-
-        FragmentTransaction transaction = fragmentManager.beginTransaction()
-                .setCustomAnimations(R.animator.slide_in_left, R.animator.slide_in_right, R.animator.slide_out_left, R.animator.slide_out_right)
-                .replace(R.id.fragmentContainer, fragment);
-        if (!isLandscapeOrientation) {
-            transaction.addToBackStack(null);
-        }
-        transaction.commit();
+    private void showFragment(Fragment fragment, boolean setCustomAnimation) {
+        new Navigation(this).setCustomAnimation(setCustomAnimation).showFragment(fragment, !isLandscapeOrientation);
     }
 
     private Toolbar initToolbar() {
@@ -214,19 +202,17 @@ public class MainActivity extends AppCompatActivity {
             int lastOpenedNote = ListNotesFragment.getLastOpenedNote();
             if (repo.getSize() > 0 && lastOpenedNote != -1) {
                 note = repo.get(lastOpenedNote);
+                fragment = NoteFragment.getInstance(note);
             } else {
-                note = new Note();
+                fragment = NoteFragment.getInstance();
             }
-            fragment = NoteFragment.getInstance(note);
+
         } else {
             fragment = new ListNotesFragment();
 //            fragment = new StartFragment();
-
         }
 
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.fragmentContainer, fragment)
-                .commit();
+        showFragment(fragment, true);
     }
 
     private void checkLandscape() {
