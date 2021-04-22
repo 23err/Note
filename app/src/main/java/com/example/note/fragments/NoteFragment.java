@@ -1,7 +1,6 @@
 package com.example.note.fragments;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
@@ -31,15 +30,11 @@ public class NoteFragment extends Fragment {
     private MaterialTextView tvDate;
     private EditText etBody, etName;
     private Note note;
-    private OnNoteUpdateListener noteUpdateListener;
-
     private SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
     private boolean isNew = false;
     private Publisher publisher;
 
-    public interface OnNoteUpdateListener {
-        void onUpdateNote(Note note);
-    };
+
 
     public static NoteFragment getInstance() {
         NoteFragment noteFragment = new NoteFragment();
@@ -53,9 +48,6 @@ public class NoteFragment extends Fragment {
         noteFragment.setArguments(args);
         return noteFragment;
     }
-
-
-
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -120,8 +112,10 @@ public class NoteFragment extends Fragment {
 
     @Override
     public void onDestroy() {
-        publisher.notifySingle(note, isNew);
         super.onDestroy();
+        if (publisher != null) {
+            publisher.notifySingle(note, isNew);
+        }
     }
 
     private void setValues() {

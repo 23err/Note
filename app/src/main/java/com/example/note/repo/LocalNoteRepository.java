@@ -11,87 +11,83 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class LocalNoteRepository implements NoteRepository {
-    private List<Note> noteList;
+public abstract class LocalNoteRepository implements NoteRepository {
+    private List<Note> resultNotes = new ArrayList<>();
+    private List<Note> allNotes = new ArrayList<>();
 
-    public LocalNoteRepository() {
-        noteList = new ArrayList<>();
-        fillNoteList();
-    }
-
-    private void fillNoteList() {
-        insert(new Note("first note", "aklsjhfkkhsdf askdjfhka"));
-        insert(new Note("second note", "aklsjhfkkhsdf askdjfhka"));
-        insert(new Note("", "third note in body"));
-        insert(new Note("ajsd", "aklsjhfkkhsdf askdjfhka"));
-//        for (int i = 0; i < 30; i++) {
-//            insertNote(new Note("note test", "hello"));
-//
-//        }
-    }
-
-
-    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
-    public List<Note> find(String text) {
+    public NoteRepository search(String text) {
         final String finalText = text.toLowerCase().trim();
-        if (finalText.length()==0) {
-            return noteList;
+        if (finalText.length() == 0) {
+            resultNotesInit(allNotes);
+            return this;
         }
-        List<Note> list = noteList.stream()
-                .filter(note -> {
-                    return (note.getName().toLowerCase().contains(finalText) || note.getBody().toLowerCase().contains(finalText));
-                })
-                .collect(Collectors.toList());
-        return list;
+
+        List<Note> list = null;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+            list = allNotes.stream()
+                    .filter(note -> {
+                        return (note.getName().toLowerCase().contains(finalText) || note.getBody().toLowerCase().contains(finalText));
+                    })
+                    .collect(Collectors.toList());
+        }
+        resultNotesInit(list);
+        return this;
+    }
+
+    public void updateList() {
+        resultNotesInit(allNotes);
     }
 
     @Override
     public void update(Note note) {
-        int ind = noteList.indexOf(note);
-        if (ind!=-1) {
-            noteList.set(ind, note);
+        int ind = allNotes.indexOf(note);
+        if (ind != -1) {
+            allNotes.set(ind, note);
         }
     }
 
     @Override
     public int getIndex(Note note) {
-        return noteList.indexOf(note);
+        return allNotes.indexOf(note);
     }
 
     @Override
     public void insert(Note note) {
         if (!note.isEmpty())
-            noteList.add(note);
+            allNotes.add(note);
     }
-
-
 
     @Override
     public Note get(int index) {
-        return noteList.get(index);
+        return allNotes.get(index);
     }
 
     @Override
     public List<Note> getList() {
-        return noteList;
+        return resultNotes;
     }
 
     @Override
     public int getSize() {
-        return noteList.size();
+        return allNotes.size();
     }
 
     @Override
     public void remove(int index) {
-        noteList.remove(index);
+        allNotes.remove(index);
     }
 
     @Override
     public void remove(Note note) {
-        int index = noteList.indexOf(note);
+        int index = allNotes.indexOf(note);
         if (index >= 0) {
-            noteList.remove(index);
+            allNotes.remove(index);
         }
+    }
+
+    private void resultNotesInit(List<Note> list) {
+        resultNotes.clear();
+        resultNotes.addAll(list);
     }
 }

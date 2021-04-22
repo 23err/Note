@@ -7,14 +7,18 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Note implements Parcelable {
-    private String name, body;
+
+    private String id, name, body;
     private Date date;
 
     private final SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
 
     protected Note(Parcel in) {
+        id = in.readString();
         name = in.readString();
         body = in.readString();
         date = new Date(in.readLong());
@@ -31,6 +35,14 @@ public class Note implements Parcelable {
             return new Note[size];
         }
     };
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public String getName() {
         return name;
@@ -60,6 +72,11 @@ public class Note implements Parcelable {
         this.date = date;
     }
 
+
+    public Note(String id, String name, String body, Date date) {
+        this(name, body, date);
+        this.id = id;
+    }
 
     public Note(String name, String body, Date date) {
         this.name = name.trim();
@@ -103,8 +120,10 @@ public class Note implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeString(id);
         parcel.writeString(name);
         parcel.writeString(body);
         parcel.writeLong(date.getTime());
     }
+
 }

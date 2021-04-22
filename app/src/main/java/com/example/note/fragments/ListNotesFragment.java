@@ -20,6 +20,7 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.note.MainActivity;
+import com.example.note.Navigation;
 import com.example.note.R;
 import com.example.note.beans.Note;
 import com.example.note.observe.Publisher;
@@ -50,16 +51,11 @@ public class ListNotesFragment extends Fragment {
     }
 
     @Override
-    public void onAttach(@NonNull Context context) {
-        super.onAttach(context);
-        publisher = ((MainActivity)getActivity()).getPublisher();
-    }
-
-    @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         isLandscape = getActivity().getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE;
         setHasOptionsMenu(true);
+        publisher = ((MainActivity) requireActivity()).getPublisher();
     }
 
     @Nullable
@@ -73,65 +69,39 @@ public class ListNotesFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         findViews(view);
         readViewTypeSP();
-
-        repo = NoteRepositoryFactory.getInstance();
-        noteList = new ArrayList<Note>();
-        initNoteList();
-
-        initAdapter();
-        rvNotes.setAdapter(adapter);
+        setAdapter();
         btnSetOnClick();
-
     }
 
-    private void initAdapter() {
+    private void setAdapter() {
+        repo = NoteRepositoryFactory.getInstance();
+        noteList = repo.getList();
         adapter = new NotesListRVAdapter(getContext(), noteList, this);
         adapter.setCardView(isCardViewRV);
+        rvNotes.setAdapter(adapter);
         adapterSetOnItemClick();
-        adapterSetOnRemoveItem();
-
+        repoInitListeners();
     }
 
-    @Override
-    public void onCreateContextMenu(@NonNull ContextMenu menu, @NonNull View v, @Nullable ContextMenu.ContextMenuInfo menuInfo) {
-        super.onCreateContextMenu(menu, v, menuInfo);
-        requireActivity().getMenuInflater().inflate(R.menu.context_menu_recycler_view, menu);
-
+    private void repoInitListeners() {
+        repo
+                .setOnInitListener(adapter::notifyDataSetChanged)
+                .setOnInsertListener(adapter::notifyItemInserted)
+                .setOnUpdateListener(adapter::notifyItemChanged)
+                .setOnRemoveListener(index -> {
+                    adapter.notifyItemRemoved(index);
+                    if (index == lastOpenedNote) {
+                        lastOpenedNote = -1;
+                    }
+                })
+                .init();
     }
-
-    @Override
-    public boolean onContextItemSelected(@NonNull MenuItem item) {
-        int resId = item.getItemId();
-        int position = adapter.getPosition();
-        switch (resId) {
-            case R.id.itemRemove:
-                repo.remove(position);
-                noteList.remove(position);
-                adapter.notifyItemRemoved(position);
-
-                return true;
-        }
-        return super.onContextItemSelected(item);
-    }
-
-    private void initNoteList() {
-        noteList.addAll(repo.getList());
-    }
-
-    private void adapterSetOnRemoveItem() {
-        adapter.setOnRemoveItemListener(note -> {
-            repo.remove(note);
-            updateNoteList();
-            adapter.notifyDataSetChanged();
-        });
-    }
-
 
     private void adapterSetOnItemClick() {
         adapter.setOnItemClickListener((view1, note) -> {
             NoteFragment fragment = NoteFragment.getInstance(note);
-            subscribeToFragment();
             showFragment(fragment);
+            subscribeToFragment();
         });
     }
 
@@ -145,36 +115,41 @@ public class ListNotesFragment extends Fragment {
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                updateNoteList(newText);
+                repo.search(newText);
                 return true;
             }
         });
     }
 
-    private void updateNoteList() {
-        updateNoteList(searchView.getQuery().toString());
+
+    @Override
+    public void onCreateContextMenu(@NonNull ContextMenu menu, @NonNull View v, @Nullable ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        requireActivity().getMenuInflater().inflate(R.menu.context_menu_recycler_view, menu);
     }
 
-    private void updateNoteList(String newText) {
-        noteList.clear();
-        noteList.addAll(repo.find(newText));
-        adapter.notifyDataSetChanged();
+    @Override
+    public boolean onContextItemSelected(@NonNull MenuItem item) {
+        int resId = item.getItemId();
+        int position = adapter.getPosition();
+        switch (resId) {
+            case R.id.itemRemove:
+                repo.remove(position);
+                return true;
+        }
+        return super.onContextItemSelected(item);
     }
+
 
     private void subscribeToFragment() {
         publisher.subscribe((note, isNew) -> {
-            int ind;
             if (isNew) {
                 repo.insert(note);
-                noteList.add(note);
-                ind = repo.getSize()-1;
-                adapter.notifyItemInserted(ind);
+                lastOpenedNote = repo.getSize() - 1;
             } else {
                 repo.update(note);
-                ind = repo.getIndex(note);
-                adapter.notifyItemChanged(ind);
+                lastOpenedNote = repo.getIndex(note);
             }
-            lastOpenedNote = ind;
         });
 
     }
@@ -185,13 +160,7 @@ public class ListNotesFragment extends Fragment {
 
 
     private void showFragment(Fragment fragment) {
-        FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction()
-                .setCustomAnimations(R.animator.slide_in_left, R.animator.slide_in_right, R.animator.slide_out_left, R.animator.slide_out_right)
-                .replace(R.id.fragmentContainer, fragment);
-        if (!isLandscape) {
-            transaction.addToBackStack("note");
-        }
-        transaction.commit();
+        new Navigation(requireActivity()).setCustomAnimation(true).showFragment(fragment, !isLandscape);
     }
 
 
@@ -223,7 +192,7 @@ public class ListNotesFragment extends Fragment {
         if (resId == R.id.view) {
             isCardViewRV = !isCardViewRV;
             saveViewType();
-            initAdapter();
+            adapter.setCardView(isCardViewRV);
             rvNotes.setAdapter(adapter);
             return true;
         }
@@ -237,7 +206,7 @@ public class ListNotesFragment extends Fragment {
         edit.apply();
     }
 
-    private void readViewTypeSP(){
+    private void readViewTypeSP() {
         SharedPreferences sharedPreferences = requireActivity().getSharedPreferences(VIEWTYPE, Context.MODE_PRIVATE);
         isCardViewRV = sharedPreferences.getBoolean(IS_CARD_VIEW_IN_RV, false);
     }

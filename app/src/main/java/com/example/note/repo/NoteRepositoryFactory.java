@@ -6,7 +6,7 @@ public class NoteRepositoryFactory {
 
     public static NoteRepository getInstance() {
         if (repo == null) {
-            repo = new LocalNoteRepository();
+            repo = new LocalWithCloudRepository();
         }
         return repo;
     }
