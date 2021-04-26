@@ -1,6 +1,7 @@
 package com.example.note.fragments;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -11,9 +12,11 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
@@ -26,6 +29,7 @@ import com.example.note.beans.Note;
 import com.example.note.observe.Publisher;
 import com.example.note.repo.NoteRepository;
 import com.example.note.repo.NoteRepositoryFactory;
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
@@ -34,6 +38,7 @@ import java.util.List;
 public class ListNotesFragment extends Fragment {
     public static final String VIEWTYPE = "viewtype";
     public static final String IS_CARD_VIEW_IN_RV = "isCardViewInRV";
+    public static final String NOTE_TAG = "NOTE";
     private FloatingActionButton btnAdd;
     private RecyclerView rvNotes;
     private NoteRepository repo;
@@ -100,7 +105,11 @@ public class ListNotesFragment extends Fragment {
     private void adapterSetOnItemClick() {
         adapter.setOnItemClickListener((view1, note) -> {
             NoteFragment fragment = NoteFragment.getInstance(note);
-            showFragment(fragment);
+            if (getActivity().getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+                fragment.show(getFragmentManager(), NOTE_TAG);
+            } else {
+                showFragment(fragment);
+            }
             subscribeToFragment();
         });
     }
@@ -134,12 +143,19 @@ public class ListNotesFragment extends Fragment {
         int position = adapter.getPosition();
         switch (resId) {
             case R.id.itemRemove:
-                repo.remove(position);
+                AlertDialog alertDialog = new AlertDialog.Builder(getContext())
+                        .setTitle(R.string.remove_text)
+                        .setMessage(R.string.delete_entry)
+                        .setCancelable(true)
+                        .setIcon(R.drawable.ic_baseline_delete_24)
+                        .setPositiveButton(R.string.ok, (dialogInterface, i) -> repo.remove(position))
+                        .setNegativeButton(getString(R.string.cancel), null)
+                        .create();
+                alertDialog.show();
                 return true;
         }
         return super.onContextItemSelected(item);
     }
-
 
     private void subscribeToFragment() {
         publisher.subscribe((note, isNew) -> {

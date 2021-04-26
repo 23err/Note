@@ -1,6 +1,6 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <attr name="dateTextColor" format="color|reference"/>
-    <attr name="navBackground" format="color|reference"/>
+    <attr name="dateTextColor" format="color|reference" />
+    <attr name="navBackground" format="color|reference" />
     <attr name="navMailColor" format="color|reference" />
     <!-- Base application theme. -->
     <style name="ThemeNote" parent="Theme.MaterialComponents.DayNight.NoActionBar">
@@ -19,6 +19,7 @@
         <item name="backgroundColor">@color/white</item>
         <item name="dateTextColor">@color/gray_444</item>
         <item name="navMailColor">@color/gray_100</item>
+        <item name="bottomSheetDialogTheme">@style/AppBottomSheetDialogTheme</item>
     </style>
 
     <style name="ThemeNote.AppBarOverLay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
@@ -26,4 +27,13 @@
     <style name="ThemeNote.PopupOverlay" parent="Theme.AppCompat.Light" />
 
 
+    <style name="AppBottomSheetDialogTheme"
+        parent="Theme.Design.Light.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/AppModalStyle</item>
+    </style>
+
+    <style name="AppModalStyle"
+        parent="Widget.Design.BottomSheet.Modal">
+        <item name="android:background">@drawable/rounded_rectangle</item>
+    </style>
 </resources>

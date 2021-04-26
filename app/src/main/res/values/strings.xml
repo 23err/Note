@@ -20,4 +20,8 @@
     <string name="sort">Сортировать</string>
     <string name="view">Вид</string>
     <string name="continue_">продолжить</string>
+    <string name="remove_text">Удаление</string>
+    <string name="delete_entry">Удалить запись?</string>
+    <string name="ok">да</string>
+    <string name="cancel">отмена</string>
 </resources>
