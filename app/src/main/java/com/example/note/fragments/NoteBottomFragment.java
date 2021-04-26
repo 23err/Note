@@ -3,7 +3,6 @@ package com.example.note.fragments;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,18 +12,14 @@ import android.widget.EditText;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
-import androidx.fragment.app.DialogFragment;
-import androidx.fragment.app.Fragment;
 
 import com.example.note.MainActivity;
 import com.example.note.R;
 import com.example.note.beans.Note;
+import com.example.note.fragments.listeners.OnDialogListener;
 import com.example.note.observe.Publisher;
-import com.google.android.material.bottomsheet.BottomSheetBehavior;
-import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.datepicker.MaterialStyledDatePickerDialog;
 import com.google.android.material.textview.MaterialTextView;
 
@@ -32,8 +27,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
-public class NoteFragment extends BottomSheetDialogFragment {
-
+public class NoteBottomFragment extends BottomSheetDialogFragment {
     public static final String NOTE_PARCELABLE_KEY = "Note";
     private MaterialTextView tvDate;
     private EditText etBody, etName;
@@ -42,15 +36,12 @@ public class NoteFragment extends BottomSheetDialogFragment {
     private boolean isNew = false;
     private Publisher publisher;
 
-
-
-    public static NoteFragment getInstance() {
-        NoteFragment noteFragment = new NoteFragment();
-        return noteFragment;
+    public static NoteBottomFragment getInstance(){
+        return new NoteBottomFragment();
     }
 
-    public static NoteFragment getInstance(Note note) {
-        NoteFragment noteFragment = getInstance();
+    public static NoteBottomFragment getInstance(Note note) {
+        NoteBottomFragment noteFragment = getInstance();
         Bundle args = new Bundle();
         args.putParcelable(NOTE_PARCELABLE_KEY, note);
         noteFragment.setArguments(args);
@@ -72,8 +63,7 @@ public class NoteFragment extends BottomSheetDialogFragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_note, container, false);
-        return view;
+        return inflater.inflate(R.layout.fragment_note, container, false);
     }
 
     @Override
@@ -82,16 +72,6 @@ public class NoteFragment extends BottomSheetDialogFragment {
         findViews(view);
         setValues();
         setDatePickerDialog();
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        Dialog dialog = getDialog();
-        if (dialog != null) {
-            View bottomSheet = dialog.findViewById(R.id.design_bottom_sheet);
-            bottomSheet.getLayoutParams().height = ViewGroup.LayoutParams.MATCH_PARENT;
-        }
     }
 
     @Override
@@ -105,6 +85,7 @@ public class NoteFragment extends BottomSheetDialogFragment {
     public void onDetach() {
         super.onDetach();
         publisher = null;
+
     }
 
 
@@ -155,7 +136,7 @@ public class NoteFragment extends BottomSheetDialogFragment {
                     calendar.get(Calendar.MONTH),
                     calendar.get(Calendar.DAY_OF_MONTH)
             )
-            .show();
+                    .show();
         });
     }
 
@@ -163,6 +144,8 @@ public class NoteFragment extends BottomSheetDialogFragment {
         tvDate = view.findViewById(R.id.tvDate);
         etBody = view.findViewById(R.id.etBody);
         etName = view.findViewById(R.id.etName);
-    }
-}
 
+    }
+
+
+}

@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -19,6 +20,7 @@ import androidx.fragment.app.Fragment;
 
 import com.example.note.beans.Note;
 import com.example.note.fragments.ListNotesFragment;
+import com.example.note.fragments.NoteBottomFragment;
 import com.example.note.fragments.NoteFragment;
 import com.example.note.observe.Publisher;
 import com.example.note.repo.NoteRepository;
@@ -29,6 +31,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.navigation.NavigationView;
 
 
@@ -61,11 +64,6 @@ public class MainActivity extends AppCompatActivity {
         initializeAccount();
     }
 
-    private void initializeAccount() {
-        account = GoogleSignIn.getLastSignedInAccount(getApplicationContext());
-        updateNav(account);
-    }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -74,6 +72,11 @@ public class MainActivity extends AppCompatActivity {
             account = task.getResult();
             updateNav(account);
         }
+    }
+
+    private void initializeAccount() {
+        account = GoogleSignIn.getLastSignedInAccount(getApplicationContext());
+        updateNav(account);
     }
 
     private void updateNav(GoogleSignInAccount account) {
@@ -125,7 +128,6 @@ public class MainActivity extends AppCompatActivity {
     private void initView() {
         Toolbar toolbar = initToolbar();
         initDrawer(toolbar);
-
         View view = navigationView.getHeaderView(0);
         ivAva = view.findViewById(R.id.ivAvatar);
         tvUserName = view.findViewById(R.id.tvUserName);
@@ -134,7 +136,6 @@ public class MainActivity extends AppCompatActivity {
         signOutButton = view.findViewById(R.id.sign_out_button);
         profileLayout = view.findViewById(R.id.profile);
         signButtonsInitialize();
-
     }
 
     private void signButtonsInitialize() {
@@ -149,7 +150,6 @@ public class MainActivity extends AppCompatActivity {
             updateNav(account);
         });
     }
-
 
     private void initDrawer(Toolbar toolbar) {
         drawer = findViewById(R.id.drawerLayout);
@@ -218,6 +218,8 @@ public class MainActivity extends AppCompatActivity {
     private void checkLandscape() {
         isLandscapeOrientation = getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE;
     }
+
+
 
 
 }
